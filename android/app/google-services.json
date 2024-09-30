@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "542210820071",
+    "firebase_url": "https://manager-e432a.firebaseio.com",
+    "project_id": "manager-e432a",
+    "storage_bucket": "manager-e432a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:542210820071:android:5bb51400fd4ea2adf55f42",
+        "android_client_info": {
+          "package_name": "com.quizz.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "542210820071-qs0nvagevim70hraj0najmlhjeksq7ad.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoGKWz1yHw4uOH2_ma7g5hobruKgsQlsE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "542210820071-qs0nvagevim70hraj0najmlhjeksq7ad.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

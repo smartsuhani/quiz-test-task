@@ -20,6 +20,8 @@ const initialState: QuizzesState = {
 export const fetchQuizzesCategory = createAsyncThunk<QuizCategory[]>(
   'quizzesCategory/fetchQuizzesCategory',
   async () => {
+    const ref1 = firebase.database().ref('/quizzesCategories');
+    await ref1.keepSynced(true);
     const snapshot = await firebase
       .database()
       .ref('/quizzesCategories')

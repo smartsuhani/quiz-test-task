@@ -1,9 +1,22 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {firebaseSignup} from '../api/mockApi';
-import {setLogin, setSubmitting, setLoginMessage} from '../redux/slices/userSlice';
-import {selectIsSubmitting, selectLoginMessage} from '../redux/slices/userSlice';
+import {
+  setLogin,
+  setSubmitting,
+  setLoginMessage,
+} from '../redux/slices/userSlice';
+import {
+  selectIsSubmitting,
+  selectLoginMessage,
+} from '../redux/slices/userSlice';
 
 const SignUpScreen = ({navigation}): React.ReactElement => {
   const [email, setEmail] = useState('');
@@ -45,15 +58,15 @@ const SignUpScreen = ({navigation}): React.ReactElement => {
       <TouchableOpacity
         style={styles.button}
         onPress={handleSignup}
-        disabled={isSubmitting}
-      >
+        disabled={isSubmitting}>
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
       {loginMessage ? <Text style={styles.error}>{loginMessage}</Text> : null}
-      <TouchableOpacity onPress={() => {
-        dispatch(setLoginMessage(''));
-        navigation.navigate("SignIn");
-      }}>
+      <TouchableOpacity
+        onPress={() => {
+          dispatch(setLoginMessage(''));
+          navigation.navigate('SignIn');
+        }}>
         <Text style={styles.signUpText}>Already have an account? Sign In</Text>
       </TouchableOpacity>
     </View>

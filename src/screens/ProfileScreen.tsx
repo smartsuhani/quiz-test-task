@@ -1,33 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
-  Image,
   TextInput,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   ActivityIndicator,
-  Modal,
   Alert,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '../redux/store';
 import {
   selectFullName,
   selectUserProfileLoading,
   selectUserProfileError,
   fetchFullName,
-  updateFullName,
-} from '../redux/slices/userProfileSlice';
+  updateFullName, clearUserProfile
+} from "../redux/slices/userProfileSlice";
 import auth from '@react-native-firebase/auth';
-import { setLogout } from '../redux/slices/userSlice';
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
+import {setLogout} from '../redux/slices/userSlice';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Modal from 'react-native-modal';
 const ProfileScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -41,8 +40,10 @@ const ProfileScreen: React.FC = () => {
 
   // Modal states
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     dispatch(fetchFullName());
@@ -59,7 +60,9 @@ const ProfileScreen: React.FC = () => {
   const handleLogout = async () => {
     try {
       await auth().signOut(); // Sign out from Firebase
-      dispatch(setLogout({ message: 'Logged out successfully' })); // Dispatch logout action
+      dispatch(setLogout({message: 'Logged out successfully'})); // Dispatch logout action
+      dispatch({type: 'LOGOUT'});
+      dispatch(clearUserProfile());
       navigation.navigate('Login');
     } catch (error) {
       console.error('Logout error:', error);
@@ -80,14 +83,25 @@ const ProfileScreen: React.FC = () => {
 
     const user = auth().currentUser;
     if (user) {
+      const emailCred = auth.EmailAuthProvider.credential(
+        user.email,
+        currentPassword,
+      );
+
+      setIsLoading(true); // Start loading
+
       try {
+        await user.reauthenticateWithCredential(emailCred);
         await user.updatePassword(newPassword);
         Alert.alert('Success', 'Password changed successfully!');
         setIsModalVisible(false);
         setNewPassword('');
         setConfirmPassword('');
+        setCurrentPassword(''); // Clear the current password field
       } catch (error) {
         Alert.alert('Error', error.message);
+      } finally {
+        setIsLoading(false); // Stop loading
       }
     }
   };
@@ -97,19 +111,23 @@ const ProfileScreen: React.FC = () => {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.keyboardAvoidingView}>
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
-          <TouchableOpacity
-            style={[
-              styles.saveButton,
-              !isSaveEnabled && styles.saveButtonDisabled,
-            ]}
-            onPress={handleSave}
-            disabled={!isSaveEnabled}>
-            <Text style={styles.saveButtonText}>Save</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.saveButton,
+            !isSaveEnabled && styles.saveButtonDisabled,
+          ]}
+          onPress={handleSave}
+          disabled={!isSaveEnabled}>
+          <Text style={styles.saveButtonText}>Save</Text>
+        </TouchableOpacity>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollViewContent}>
           <View style={styles.profileContainer}>
-            <Image
-              source={{ uri: 'https://placekitten.com/100/100' }}
+            <FontAwesome5
+              name="user-circle"
+              size={100}
+              color="black"
               style={styles.profileImage}
             />
             {loading ? (
@@ -121,9 +139,15 @@ const ProfileScreen: React.FC = () => {
                   style={styles.fullNameInput}
                   value={fullName}
                   onChangeText={setFullNameState}
+                  placeholderTextColor={'#808080'}
                   placeholder="Full Name"
                 />
-                <Text style={styles.email}>{user.email}</Text>
+                <Text style={{color: 'grey', marginBottom: 30}}>
+                  (here you can update your full name)
+                </Text>
+                <View style={styles.email}>
+                  <Text style={styles.email}>{user.email}</Text>
+                </View>
               </>
             )}
           </View>
@@ -131,200 +155,131 @@ const ProfileScreen: React.FC = () => {
             <TouchableOpacity
               style={styles.button}
               onPress={() => setIsModalVisible(true)}>
-              <Text style={styles.buttonText}>Change Password</Text>
+              <View style={{flexDirection: 'row', gap: 10}}>
+                <MaterialIcons name={'password'} size={24} color={'#5591BD'} />
+                <Text style={styles.buttonText}>Change Password</Text>
+              </View>
+              <MaterialIcons
+                name={'keyboard-arrow-right'}
+                size={24}
+                color={'#5591BD'}
+              />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={handleLogout}>
-              <Text style={styles.buttonText}>Logout</Text>
-            </TouchableOpacity>
+            <View style={styles.seperator} />
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate('MyQuizzes')}>
-              <Text style={styles.buttonText}>My Quizzes</Text>
+              onPress={() => navigation.navigate('UserQuizzesScreen')}>
+              <View style={{flexDirection: 'row', gap: 10}}>
+                <MaterialIcons
+                  name={'my-library-books'}
+                  size={24}
+                  color={'#5591BD'}
+                />
+                <Text style={styles.buttonText}>My Quizzes</Text>
+              </View>
+              <MaterialIcons
+                name={'keyboard-arrow-right'}
+                size={24}
+                color={'#5591BD'}
+              />
             </TouchableOpacity>
+            <View style={styles.seperator} />
+
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate('AttemptedQuizzes')}>
-              <Text style={styles.buttonText}>Attempted Quizzes</Text>
+              onPress={() => navigation.navigate('UserAttemptedQuizzesScreen')}>
+              <View style={{flexDirection: 'row', gap: 10}}>
+                <MaterialIcons
+                  name={'view-carousel'}
+                  size={24}
+                  color={'#5591BD'}
+                />
+                <Text style={styles.buttonText}>Attempted Quizzes</Text>
+              </View>
+              <MaterialIcons
+                name={'keyboard-arrow-right'}
+                size={24}
+                color={'#5591BD'}
+              />
+            </TouchableOpacity>
+            <View style={styles.seperator} />
+            <TouchableOpacity
+              style={[
+                styles.button,
+                {paddingVertical: 25, alignItems: 'center'},
+              ]}
+              onPress={handleLogout}>
+              <View style={{flexDirection: 'row', gap: 10}}>
+                <MaterialIcons name={'logout'} size={24} color={'#F38686'} />
+                <Text style={[styles.buttonText, {color: '#F38686'}]}>
+                  Logout
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
-
-          {/* Change Password Modal */}
-          {/*<Modal*/}
-          {/*  isVisible={true}*/}
-          {/*  style={{*/}
-          {/*    shadowOffset: {*/}
-          {/*      width: 1,*/}
-          {/*      height: 0,*/}
-          {/*    },*/}
-          {/*    shadowOpacity: 0.2,*/}
-          {/*    shadowRadius: 5,*/}
-          {/*    elevation: 3,*/}
-          {/*    marginHorizontal: 12,*/}
-          {/*    marginBottom: 60,*/}
-          {/*  }}*/}
-          {/*  backdropOpacity={0}>*/}
-          {/*  <ScrollView*/}
-          {/*    scrollEnabled={false}*/}
-          {/*    keyboardShouldPersistTaps={'handled'}*/}
-          {/*    // keyboardDismissMode='none'*/}
-          {/*    keyboardDismissMode="on-drag"*/}
-          {/*    contentContainerStyle={{flex: 1, backgroundColor: 'transparent'}}>*/}
-          {/*    <KeyboardAwareScrollView animated={true}>*/}
-          {/*      <View*/}
-          {/*        style={{*/}
-          {/*          ...styles.mainView,*/}
-          {/*          backgroundColor: '#FFF',*/}
-          {/*        }}>*/}
-          {/*        <Text*/}
-          {/*          style={[*/}
-          {/*            styles.enterEmailTitle,*/}
-          {/*            {color: 'black', fontWeight: 'bold', fontSize: 26},*/}
-          {/*          ]}>*/}
-          {/*          Login*/}
-          {/*        </Text>*/}
-          {/*        <View style={styles.userInputView}>*/}
-          {/*          <View*/}
-          {/*            style={{*/}
-          {/*              flexDirection: 'row',*/}
-          {/*              padding: 10,*/}
-          {/*              width: Metrics.screenWidth - 44,*/}
-          {/*              backgroundColor: '#FFF',*/}
-          {/*              borderRadius: 5,*/}
-          {/*              marginBottom: 20,*/}
-          {/*              alignItems: 'center',*/}
-          {/*              justifyContent: 'space-between',*/}
-          {/*              gap: 5,*/}
-          {/*              alignSelf: 'center',*/}
-          {/*              borderWidth: 0.2,*/}
-          {/*            }}>*/}
-          {/*            <View style={{flexDirection: 'column', flex: 1}}>*/}
-          {/*              <FloatingTextInput*/}
-          {/*                label="Username"*/}
-          {/*                value={email}*/}
-          {/*                onChangeText={e => setEmail(e?.trim())}*/}
-          {/*                titleActiveSize={12}*/}
-          {/*                titleInActiveSize={15}*/}
-          {/*                titleActiveColor={appThemeColor.secondaryText}*/}
-          {/*                titleInactiveColor={appThemeColor.secondaryText}*/}
-          {/*              />*/}
-          {/*            </View>*/}
-          {/*          </View>*/}
-          {/*          {isError.type === 'username' && (*/}
-          {/*            <View style={styles.errorTextView}>*/}
-          {/*              <InfoIcon color={'red'} />*/}
-          {/*              <Text style={styles.errorText}>{isError.message}</Text>*/}
-          {/*            </View>*/}
-          {/*          )}*/}
-          {/*        </View>*/}
-          {/*        <View style={styles.passwordView}>*/}
-          {/*          <View*/}
-          {/*            style={{*/}
-          {/*              flexDirection: 'row',*/}
-          {/*              padding: 10,*/}
-          {/*              width: Metrics.screenWidth - 44,*/}
-          {/*              backgroundColor: '#FFF',*/}
-          {/*              borderRadius: 5,*/}
-          {/*              marginBottom: 20,*/}
-          {/*              alignItems: 'center',*/}
-          {/*              justifyContent: 'space-between',*/}
-          {/*              gap: 5,*/}
-          {/*              alignSelf: 'center',*/}
-          {/*              borderWidth: 0.2,*/}
-          {/*            }}>*/}
-          {/*            <View style={{flexDirection: 'column', flex: 1}}>*/}
-          {/*              <FloatingTextInput*/}
-          {/*                label="Password"*/}
-          {/*                value={password}*/}
-          {/*                secureTextEntry={showPassword}*/}
-          {/*                onChangeText={e => setPassword(e?.trim())}*/}
-          {/*                titleActiveSize={12}*/}
-          {/*                titleInActiveSize={15}*/}
-          {/*                titleActiveColor={appThemeColor.secondaryText}*/}
-          {/*                titleInactiveColor={appThemeColor.secondaryText}*/}
-          {/*              />*/}
-          {/*            </View>*/}
-          {/*            <TouchableOpacity*/}
-          {/*              activeOpacity={0.8}*/}
-          {/*              style={styles.eyeBtn}*/}
-          {/*              testID="eye-icon"*/}
-          {/*              onPress={() => {*/}
-          {/*                setShowPassword(!showPassword);*/}
-          {/*              }}>*/}
-          {/*              {showPassword ? <EyeSlashIcon /> : <EyeIcon />}*/}
-          {/*            </TouchableOpacity>*/}
-          {/*          </View>*/}
-          {/*          {isError.type === 'password' && (*/}
-          {/*            <View style={styles.errorTextView}>*/}
-          {/*              <InfoIcon color={PRIMARY_COLOR} />*/}
-          {/*              <Text style={styles.errorText}>*/}
-          {/*                The password entered is incorrect*/}
-          {/*              </Text>*/}
-          {/*            </View>*/}
-          {/*          )}*/}
-          {/*          {isError.type === 'Both' && (*/}
-          {/*            <View style={styles.errorTextView2}>*/}
-          {/*              <InfoIcon color={'red'} />*/}
-          {/*              <Text style={styles.errorText}>{isError.message}</Text>*/}
-          {/*            </View>*/}
-          {/*          )}*/}
-          {/*        </View>*/}
-          {/*        <View style={styles.btnView}>*/}
-          {/*          <View testID="Login Button">*/}
-          {/*            <Pressable*/}
-          {/*              style={[*/}
-          {/*                styles.loginBtn,*/}
-          {/*                {paddingVertical: loading ? 10 : 14},*/}
-          {/*              ]}*/}
-          {/*              onPress={handleLogin}>*/}
-          {/*              {loading ? (*/}
-          {/*                <LoaderKit*/}
-          {/*                  style={styles.loader}*/}
-          {/*                  name={'LineScale'}*/}
-          {/*                  color={PRIMARY_COLOR}*/}
-          {/*                />*/}
-          {/*              ) : (*/}
-          {/*                <Text style={styles.loginText}>Login</Text>*/}
-          {/*              )}*/}
-          {/*            </Pressable>*/}
-          {/*          </View>*/}
-          {/*        </View>*/}
-          {/*      </View>*/}
-          {/*    </KeyboardAwareScrollView>*/}
-          {/*  </ScrollView>*/}
-          {/*</Modal>*/}
-          <Modal
-            transparent={true}
-            animationType="slide"
-            visible={isModalVisible}
-            onRequestClose={() => setIsModalVisible(false)}>
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalTitle}>Change Password</Text>
-                <TextInput
-                  style={styles.modalInput}
-                  value={newPassword}
-                  onChangeText={setNewPassword}
-                  placeholder="New Password"
-                  secureTextEntry
-                />
-                <TextInput
-                  style={styles.modalInput}
-                  value={confirmPassword}
-                  onChangeText={setConfirmPassword}
-                  placeholder="Confirm Password"
-                  secureTextEntry
-                />
-                <TouchableOpacity style={styles.modalButton} onPress={handleChangePassword}>
-                  <Text style={styles.modalButtonText}>Change Password</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setIsModalVisible(false)}>
-                  <Text style={styles.closeButton}>Close</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Modal>
         </ScrollView>
       </KeyboardAvoidingView>
+      <Modal
+        isVisible={isModalVisible}
+        backdropOpacity={0.5}
+        onBackdropPress={() => setIsModalVisible(false)}
+        style={{margin: 0}}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.keyboardAvoidingView}>
+          <ScrollView
+            contentContainerStyle={styles.modalContainer}
+            keyboardShouldPersistTaps="handled">
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Change Password</Text>
+              <TextInput
+                style={styles.modalInput}
+                value={currentPassword}
+                onChangeText={setCurrentPassword}
+                placeholderTextColor={'#808080'}
+                placeholder="Current Password"
+                secureTextEntry
+                autoFocus={true} // Automatically focuses the input when the modal opens
+              />
+              <TextInput
+                style={styles.modalInput}
+                value={newPassword}
+                onChangeText={setNewPassword}
+                placeholderTextColor={'#808080'}
+                placeholder="New Password"
+                secureTextEntry
+              />
+              <TextInput
+                style={styles.modalInput}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                placeholderTextColor={'#808080'}
+                placeholder="Confirm Password"
+                secureTextEntry
+              />
+              <TouchableOpacity
+                style={[styles.modalButton, isLoading && styles.disabledButton]}
+                onPress={handleChangePassword}
+                disabled={isLoading}>
+                {isLoading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.modalButtonText}>Change Password</Text>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsModalVisible(false);
+                  setNewPassword('');
+                  setConfirmPassword('');
+                  setCurrentPassword(''); // Clear the current password field
+                }}>
+                <Text style={styles.closeButton}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -334,20 +289,36 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
-  keyboardAvoidingView: {
-    flex: 1,
-  },
   scrollViewContent: {
     flexGrow: 1,
     justifyContent: 'center',
     padding: 20,
+    marginTop: 0,
   },
   saveButton: {
     alignSelf: 'flex-end',
-    backgroundColor: '#6200ee',
+    backgroundColor: '#5591BD',
     padding: 10,
     borderRadius: 8,
     marginBottom: 20,
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    zIndex: 999,
+  },
+  seperator: {
+    width: '100%',
+    height: 1,
+    backgroundColor: 'black',
+  },
+  mainView: {
+    position: 'absolute',
+    width: '100%',
+    bottom: 0,
+    zIndex: 1,
+    borderRadius: 20,
+    padding: 2,
+    backgroundColor: 'red',
   },
   saveButtonDisabled: {
     backgroundColor: '#cccccc',
@@ -365,54 +336,68 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    marginBottom: 10,
+    marginBottom: 25,
   },
   fullNameInput: {
     fontSize: 22,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: 0,
+    color: '#000'
   },
   email: {
     fontSize: 16,
-    color: '#777',
+    color: 'black',
+    backgroundColor: '#C9DFEF',
+    padding: 8,
+    width: '100%',
+    borderRadius: 10,
+    alignSelf: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
   },
   buttonsContainer: {
     width: '100%',
+    backgroundColor: '#fff',
+    paddingVertical: 10,
+    borderRadius: 20,
   },
   button: {
-    backgroundColor: '#6200ee',
-    padding: 15,
+    backgroundColor: '#fff',
+    paddingHorizontal: 15,
+    paddingVertical: 20,
     borderRadius: 8,
     alignItems: 'center',
-    marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignContent: 'center',
   },
   buttonText: {
-    color: '#fff',
+    color: 'black',
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign: 'left',
+    alignSelf: 'flex-start',
   },
   errorText: {
     color: 'red',
     marginBottom: 10,
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dark background for the modal
-  },
   modalContent: {
-    width: '80%',
+    width: '100%',
     padding: 20,
     backgroundColor: '#fff',
-    borderRadius: 10,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     alignItems: 'center',
+    position: 'absolute',
+    bottom: 0,
   },
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#000'
   },
   modalInput: {
     width: '100%',
@@ -421,9 +406,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: 15,
+    color: '#000'
   },
   modalButton: {
-    backgroundColor: '#6200ee',
+    backgroundColor: '#5591BD',
     padding: 10,
     borderRadius: 8,
     alignItems: 'center',
@@ -436,9 +422,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   closeButton: {
-    color: '#6200ee',
+    color: '#5591BD',
     fontSize: 16,
     textDecorationLine: 'underline',
+  },
+  disabledButton: {
+    backgroundColor: '#cccccc',
+  },
+  keyboardAvoidingView: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  modalContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
   },
 });
 

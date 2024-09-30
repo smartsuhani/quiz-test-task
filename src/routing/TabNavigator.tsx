@@ -5,6 +5,7 @@ import AddQuizScreen from '../screens/AddQuizScreen'; // Import the new HomeStac
 import Icon from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import HomeStackNavigator from "./HomeNavigation";
+import ProfileStackNavigator from "./ProfileNavigation";
 
 const Tab = createBottomTabNavigator();
 
@@ -17,13 +18,14 @@ const TabNavigator = () => {
           backgroundColor: '#fff',
           borderTopColor: '#ccc',
         },
+        tabBarActiveTintColor: '#5591BD',
       }}>
       <Tab.Screen
         name="Home"
         component={HomeStackNavigator} // Use the HomeStackNavigator
         options={{
           tabBarIcon: ({color, size}) => (
-            <Icon name="home" color={'black'} size={size} />
+            <Icon name="home" color={color} size={size} />
           ),
         }}
       />
@@ -34,7 +36,7 @@ const TabNavigator = () => {
           tabBarIcon: ({color, size}) => (
             <MaterialIcons
               name="add-circle-outline"
-              color={'black'}
+              color={color}
               size={size}
             />
           ),
@@ -42,10 +44,10 @@ const TabNavigator = () => {
       />
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen}
+        component={ProfileStackNavigator}
         options={{
           tabBarIcon: ({color, size}) => (
-            <Icon name="profile" color={'black'} size={size} />
+            <Icon name="profile" color={color} size={size} />
           ),
         }}
       />

@@ -1,11 +1,5 @@
 import React, {useCallback, useEffect, useRef} from 'react';
-import {
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  View,
-  Animated,
-} from 'react-native';
+import {Text, TouchableOpacity, StyleSheet, View, Animated} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 
 const SplashScreen = ({navigation}): React.ReactElement => {
@@ -34,9 +28,8 @@ const SplashScreen = ({navigation}): React.ReactElement => {
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.container}
-        onPress={() => navigation.navigate('SignIn')}
-      >
-        <Text style={styles.text}>🔵 Company Name</Text>
+        onPress={() => navigation.navigate('SignIn')}>
+        <Text style={styles.text}>Quiz App</Text>
         <View style={styles.loaderContainer}>
           <Animated.View
             style={[
@@ -50,7 +43,6 @@ const SplashScreen = ({navigation}): React.ReactElement => {
             ]}
           />
         </View>
-        <Text style={styles.subText}>Tap to skip</Text>
       </TouchableOpacity>
     </View>
   );

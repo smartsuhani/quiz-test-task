@@ -28,7 +28,9 @@ import {updateUserQuizData} from '../../redux/slices/userQuizzesUpdate';
 import {
   fetchUserQuizData,
   selectFetchedUserQuizData,
+  selectFetchUserQuizStatus,
 } from '../../redux/slices/getUserQuizesSlice';
+import ProgressBar from 'react-native-progress/Bar';
 
 // Define the type for the navigation prop
 type Navigation = NavigationProp<{Win: undefined; Lose: undefined}>;
@@ -45,6 +47,7 @@ const QuizScreen: React.FC = () => {
   const {quizzes} = useSelector((state: RootState) => state.quizzes);
   const uid = useSelector(selectUserId);
   const userQuizData = useSelector(selectFetchedUserQuizData);
+  const userQuizDataStatus = useSelector(selectFetchUserQuizStatus);
   const navigation = useNavigation<Navigation>();
   const inset = useSafeAreaInsets();
   const route = useRoute();
@@ -78,12 +81,16 @@ const QuizScreen: React.FC = () => {
       dispatch(fetchUserQuizData({uid, category}));
     }
   }, [uid, category]);
-
   // Filter out attempted quizzes
-  const availableQuizzes = quizzes.filter(
-    quiz =>
-      !userQuizData?.some(userQuiz => userQuiz.question === quiz.question),
-  );
+  const availableQuizzes =
+    userQuizData && userQuizDataStatus === 'succeeded'
+      ? quizzes.filter(
+          quiz =>
+            !userQuizData?.some(
+              userQuiz => userQuiz.question === quiz.question,
+            ),
+        )
+      : quizzes;
 
   useEffect(() => {
     if (availableQuizzes.length > 0) {
@@ -92,7 +99,7 @@ const QuizScreen: React.FC = () => {
   }, [currentQuestionIndex, availableQuizzes]);
 
   useEffect(() => {
-    if (timer > 0 && !isAnswered) {
+    if (timer > 0 && !isAnswered && !initialModal) {
       const timerId = setTimeout(() => setTimer(timer - 1), 1000);
       return () => clearTimeout(timerId);
     } else if (timer === 0) {
@@ -112,7 +119,7 @@ const QuizScreen: React.FC = () => {
       setIsAnswered(true);
       setIsCorrect(false);
     }
-  }, [timer, isAnswered]);
+  }, [timer, isAnswered, initialModal]);
 
   const handleAnswer = (answer: string) => {
     setIsAnswered(true);
@@ -152,7 +159,15 @@ const QuizScreen: React.FC = () => {
   if (!currentQuestion) {
     return (
       <SafeAreaView style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>Loading...</Text>
+        <ProgressBar
+          width={209}
+          height={5}
+          color={'#5591BD'}
+          unfilledColor={'grey'}
+          borderWidth={0}
+          indeterminate={true}
+          useNativeDriver={true}
+        />
       </SafeAreaView>
     );
   }
@@ -278,15 +293,19 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: '700',
     marginBottom: 5,
+    color: '#000',
   },
   modalSubtitle: {
     fontSize: 20,
     fontWeight: '400',
     marginBottom: 5,
+    color: '#000',
+    alignSelf: 'center',
   },
   modalCategory: {
     fontSize: 30,
     fontWeight: '700',
+    color: '#000',
   },
   startButton: {
     position: 'absolute',
@@ -301,13 +320,13 @@ const styles = StyleSheet.create({
   startButtonText: {
     fontSize: 16,
     fontWeight: '700',
+    color: '#000',
   },
   container: {
     flex: 1,
     padding: 16,
     marginTop: -30,
     justifyContent: 'flex-start',
-    opacity: 0.7,
   },
   timerContainer: {
     height: 100,
@@ -327,6 +346,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 0,
     marginTop: -50,
+    color: '#000',
   },
   questionContainer: {
     backgroundColor: '#f5f5f5',
@@ -338,6 +358,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: '#000'
   },
   optionsContainer: {
     marginTop: 30,
@@ -350,6 +371,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 18,
+    color: '#000',
   },
   correctOption: {
     backgroundColor: '#fff',
@@ -390,6 +412,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginVertical: 10,
+    color: '#000'
   },
   feedbackButtons: {
     flexDirection: 'row',
@@ -404,6 +427,7 @@ const styles = StyleSheet.create({
   feedbackButtonText: {
     fontSize: 16,
     fontWeight: '700',
+    color: '#000'
   },
 });
 
