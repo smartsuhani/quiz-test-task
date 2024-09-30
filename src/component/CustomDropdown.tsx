@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Dropdown } from 'react-native-element-dropdown';
-import ShieldIcon from '../assets/Icons/ShieldIcon';
+import React, {useState} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
+import {Dropdown} from 'react-native-element-dropdown';
 
 // Define the type for the dropdown item
 interface DropdownItem {
@@ -18,15 +17,15 @@ interface CustomDropdownProps {
   subTitle?: string; // Optional subtitle
 }
 
-const CustomDropdown: React.FC<CustomDropdownProps> = (props) => {
-  const { title, data, selectedValue, setSelectedValue, subTitle } = props;
+const CustomDropdown: React.FC<CustomDropdownProps> = props => {
+  const {title, data, selectedValue, setSelectedValue, subTitle} = props;
   const [value, setValue] = useState<string | number>(selectedValue);
   const [isFocus, setIsFocus] = useState<boolean>(false);
 
   const renderLabel = () => {
     if (value || isFocus) {
       return (
-        <Text style={[styles.label, isFocus && { color: '#C9DFEF' }]}>
+        <Text style={[styles.label, isFocus && {color: '#C9DFEF'}]}>
           {subTitle}
         </Text>
       );
@@ -39,7 +38,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = (props) => {
       {renderLabel()}
       <Dropdown
         itemTextStyle={styles.textStyle}
-        style={[styles.dropdown, isFocus && { borderColor: '#C9DFEF' }]}
+        style={[styles.dropdown, isFocus && {borderColor: '#C9DFEF'}]}
         containerStyle={styles.border}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
@@ -70,9 +69,9 @@ const CustomDropdown: React.FC<CustomDropdownProps> = (props) => {
 export default CustomDropdown;
 
 const styles = StyleSheet.create({
-  iconView: { paddingRight: 10 },
-  border: { borderRadius: 15 },
-  textStyle: { color: 'black' },
+  iconView: {paddingRight: 10},
+  border: {borderRadius: 15},
+  textStyle: {color: 'black'},
   container: {
     paddingVertical: 16,
   },

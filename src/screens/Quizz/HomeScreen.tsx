@@ -1,11 +1,10 @@
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   FlatList,
   StyleSheet,
   TouchableOpacity,
-  Keyboard,
   Platform,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
@@ -19,7 +18,6 @@ import {
 } from 'react-native-safe-area-context';
 import FastImage from 'react-native-fast-image';
 import {fetchQuizzesCategory} from '../../redux/slices/quizzesCategorySlice';
-import {QuizCategory} from '../../types/Quiz';
 import {clearUserQuizData} from '../../redux/slices/getUserQuizesSlice';
 import {
   fetchFullName,
@@ -41,11 +39,7 @@ const HomeScreen = () => {
   const {points: userPoints} = useSelector(
     (state: RootState) => state.userPoints,
   );
-  const [searchMode, setSearchMode] = useState(false);
-  const [searchText, setSearchText] = useState('');
   const user = useSelector((state: RootState) => state.user);
-  const [filteredQuizIds, setFilteredQuizIds] = useState<QuizCategory[]>([]);
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [fullName, setFullNameState] = useState('');
   const storedFullName = useSelector(selectFullName);
   const loading = useSelector(selectUserProfileLoading);
@@ -61,51 +55,12 @@ const HomeScreen = () => {
   }, [storedFullName]);
 
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true);
-      },
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false);
-      },
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
-
-  useEffect(() => {
     dispatch(fetchFullName());
     dispatch(fetchQuizzesCategory());
     dispatch(clearUserQuizData());
     dispatch(fetchUserNames());
     dispatch(initializeUserPointsListener());
   }, []);
-
-  const handleSearch = useCallback(
-    (text: string) => {
-      if (text) {
-        setFilteredQuizIds(
-          quizzesCategory.filter(data =>
-            data.name.toLowerCase().includes(text.toLowerCase()),
-          ),
-        );
-      } else {
-        setFilteredQuizIds([]);
-      }
-    },
-    [quizzesCategory],
-  );
-
-  useEffect(() => {
-    handleSearch(searchText);
-  }, [searchText, handleSearch]);
 
   const calculateRanking = (
     userPoints: number,
@@ -234,7 +189,9 @@ const HomeScreen = () => {
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={() => (
           <View style={{marginBottom: 40, marginLeft: 16}}>
-            <Text style={{fontSize: 20, fontWeight: '700', color: '#000'}}>Let's Play</Text>
+            <Text style={{fontSize: 20, fontWeight: '700', color: '#000'}}>
+              Let's Play
+            </Text>
           </View>
         )}
         renderItem={({item}) => (

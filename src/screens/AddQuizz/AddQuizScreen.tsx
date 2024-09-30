@@ -7,38 +7,45 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
-  ScrollView,
-  FlatList,
 } from 'react-native';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import CustomDropdown from '../component/CustomDropdown';
+import CustomDropdown from '../../component/CustomDropdown';
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../redux/store';
+import {RootState} from '../../redux/store';
 import {
   fetchQuizzesCategory,
   selectAllQuizzesCategory,
-} from '../redux/slices/quizzesCategorySlice';
-import {addQuizData} from '../redux/slices/userOwnQuizSlice';
-import {
-  KeyboardAwareFlatList,
-  KeyboardAwareScrollView,
-} from 'react-native-keyboard-aware-scroll-view';
+} from '../../redux/slices/quizzesCategorySlice';
+import {addQuizData} from '../../redux/slices/userOwnQuizSlice';
+import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
+import useQuizForm from '../../hooks/useQuizForm'; // Import the custom hook
 
 const AddQuizScreen = (): React.ReactElement => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [question, setQuestion] = useState<string>('');
-  const [selectedValue, setSelectedValue] = useState<string>('');
-  const [correctAnswer, setCorrectAnswer] = useState<string>('');
-  const [optionsMessage, setOptionsMessage] = useState<string[]>(['', '']); // Initial two options
   const navigation = useNavigation();
   const user = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
 
   const quizzesCategory = useSelector(selectAllQuizzesCategory);
+
+  // Use the custom hook here
+  const {
+    question,
+    setQuestion,
+    selectedValue,
+    setSelectedValue,
+    correctAnswer,
+    setCorrectAnswer,
+    optionsMessage,
+    addOption,
+    deleteOption,
+    handleOptionChange,
+    resetForm,
+  } = useQuizForm();
 
   useEffect(() => {
     console.log('Modal Visible:', modalVisible);
@@ -59,38 +66,10 @@ const AddQuizScreen = (): React.ReactElement => {
     value: category.name,
   }));
 
-  const handleLeaveTypeChange = (value: string) => {
-    setSelectedValue(value);
-  };
-
   const handleCloseModal = () => {
     resetForm();
     setModalVisible(false);
     navigation.navigate('Home');
-  };
-
-  const addOption = () => {
-    if (optionsMessage.length < 4) {
-      setOptionsMessage(prevOptions => [...prevOptions, '']);
-    }
-  };
-
-  const deleteOption = (index: number) => {
-    if (optionsMessage.length > 2) {
-      const newOptions = [...optionsMessage];
-      newOptions.splice(index, 1);
-      setOptionsMessage(newOptions);
-
-      if (correctAnswer === optionsMessage[index]) {
-        setCorrectAnswer('');
-      }
-    }
-  };
-
-  const handleOptionChange = (text: string, index: number) => {
-    const newOptions = [...optionsMessage];
-    newOptions[index] = text;
-    setOptionsMessage(newOptions);
   };
 
   const handleAddQuiz = () => {
@@ -157,14 +136,6 @@ const AddQuizScreen = (): React.ReactElement => {
         Alert.alert('Error', 'Failed to add quiz');
         console.error(error);
       });
-  };
-
-  // Function to reset the form states
-  const resetForm = () => {
-    setQuestion('');
-    setSelectedValue('');
-    setOptionsMessage(['', '']); // Reset to initial two options
-    setCorrectAnswer({}); // Reset correct answer state if needed
   };
 
   const renderOptions = ({item, index}: {item: string; index: number}) => (
@@ -245,7 +216,7 @@ const AddQuizScreen = (): React.ReactElement => {
                         title={'Select Category'}
                         subTitle={'Selected Category'}
                         data={LeaveTypes}
-                        setSelectedValue={handleLeaveTypeChange}
+                        setSelectedValue={setSelectedValue}
                         selectedValue={selectedValue}
                       />
                       <View style={styles.mainView}>
@@ -284,7 +255,6 @@ const styles = StyleSheet.create({
     marginTop: 80,
   },
   mainView: {
-    // marginHorizontal: 16,
     height: 50,
     backgroundColor: '#f5f5f5',
     flexDirection: 'column',
@@ -301,10 +271,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 13,
     color: '#000',
   },
-  modalContent2: {
-    backgroundColor: '#fff',
-    flex: 1,
-  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -312,11 +278,6 @@ const styles = StyleSheet.create({
     padding: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
-  },
-  optionsList: {
-    // flexGrow: 0,
-    marginTop: 0,
-    height: 'auto',
   },
   addButtonText: {
     fontSize: 16,
@@ -331,7 +292,6 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     padding: 10,
     borderRadius: 5,
-    // marginHorizontal: 16,
   },
   optionInput: {
     flex: 1,

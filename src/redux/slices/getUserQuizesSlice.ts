@@ -44,7 +44,6 @@ export const fetchAllCategoriesUserQuizData = createAsyncThunk<
   Record<string, UserQuizData[]>,
   {uid: string}
 >('userQuiz/fetchAllCategoriesUserQuizData', async ({uid}) => {
-
   const userRef = firebase.database().ref(`userQuizzes/${uid}`);
   await userRef.keepSynced(true);
   const snapshot = await userRef.once('value'); // Fetch data

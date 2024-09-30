@@ -7,25 +7,20 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
-  ScrollView,
-  FlatList,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../redux/store';
+import {RootState} from '../../redux/store';
 import {
   updateUserQuizData,
   fetchAllQuizzes,
-} from '../redux/slices/userOwnQuizSlice';
+} from '../../redux/slices/userOwnQuizSlice';
 import Modal from 'react-native-modal';
-import CustomDropdown from '../component/CustomDropdown';
+import CustomDropdown from '../../component/CustomDropdown';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {useNavigation} from '@react-navigation/native';
-import {
-  KeyboardAwareFlatList,
-  KeyboardAwareScrollView,
-} from 'react-native-keyboard-aware-scroll-view';
+import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 
 interface UpdateQuizScreenProps {
   route: {
@@ -159,7 +154,7 @@ const UpdateQuizScreen = ({
             </TouchableOpacity>
           </View>
           <KeyboardAwareFlatList
-             style={{marginHorizontal: 16}}
+            style={{marginHorizontal: 16}}
             data={[{type: 'question'}, ...optionsMessage, {type: 'footer'}]}
             renderItem={({item, index}) => {
               if (item.type === 'question') {
@@ -233,7 +228,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
-    marginTop: 80
+    marginTop: 80,
   },
   mainView: {
     // marginHorizontal: 16,

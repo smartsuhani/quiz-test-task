@@ -14,16 +14,17 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../redux/store';
+import {RootState} from '../../redux/store';
 import {
   selectFullName,
   selectUserProfileLoading,
   selectUserProfileError,
   fetchFullName,
-  updateFullName, clearUserProfile
-} from "../redux/slices/userProfileSlice";
+  updateFullName,
+  clearUserProfile,
+} from '../../redux/slices/userProfileSlice';
 import auth from '@react-native-firebase/auth';
-import {setLogout} from '../redux/slices/userSlice';
+import {setLogout} from '../../redux/slices/userSlice';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modal';
@@ -84,7 +85,7 @@ const ProfileScreen: React.FC = () => {
     const user = auth().currentUser;
     if (user) {
       const emailCred = auth.EmailAuthProvider.credential(
-        user.email,
+        user?.email,
         currentPassword,
       );
 
@@ -343,7 +344,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 0,
-    color: '#000'
+    color: '#000',
   },
   email: {
     fontSize: 16,
@@ -397,7 +398,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#000'
+    color: '#000',
   },
   modalInput: {
     width: '100%',
@@ -406,7 +407,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     marginBottom: 15,
-    color: '#000'
+    color: '#000',
   },
   modalButton: {
     backgroundColor: '#5591BD',

@@ -12,19 +12,19 @@ import {
 } from 'react-native';
 import Modal from 'react-native-modal'; // Ensure you have installed this package
 import {useDispatch, useSelector} from 'react-redux';
-import {firebaseLogin, firebaseSignup} from '../api/mockApi';
+import {firebaseLogin, firebaseSignup} from '../../api/mockApi';
 import {
   setLogin,
   setSubmitting,
   setLoginMessage,
-} from '../redux/slices/userSlice';
+} from '../../redux/slices/userSlice';
 import {
   selectIsSubmitting,
   selectLoginMessage,
-} from '../redux/slices/userSlice';
+} from '../../redux/slices/userSlice';
 import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
-import Images from '../utils/Images';
+import Images from '../../utils/Images';
 
 const AuthScreen = () => {
   const [email, setEmail] = useState('');
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#fff',
     marginBottom: 16,
-    color: '#000'
+    color: '#000',
   },
   button: {
     backgroundColor: '#5591BD',

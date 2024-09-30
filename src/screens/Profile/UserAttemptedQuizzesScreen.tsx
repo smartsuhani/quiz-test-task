@@ -16,8 +16,8 @@ import {
   selectFetchedUserQuizData,
   selectFetchUserQuizStatus,
   selectFetchUserQuizError,
-} from '../redux/slices/getUserQuizesSlice';
-import {RootState} from '../redux/store';
+} from '../../redux/slices/getUserQuizesSlice';
+import {RootState} from '../../redux/store';
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     textAlign: 'center',
     marginTop: 5,
-    color: '#000'
+    color: '#000',
   },
   categoryScroll: {
     marginBottom: 20,

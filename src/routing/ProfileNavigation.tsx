@@ -1,12 +1,12 @@
 // src/navigation/ProfileNavigation.tsx
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import ProfileScreen from '../screens/ProfileScreen';
-import UserAttemptedQuizzesScreen from '../screens/UserAttemptedQuizzesScreen';
+import ProfileScreen from '../screens/Profile/ProfileScreen';
+import UserAttemptedQuizzesScreen from '../screens/Profile/UserAttemptedQuizzesScreen';
 import {useFocusEffect} from '@react-navigation/native';
 import {useNavigation} from '@react-navigation/native';
-import UserQuizzesScreen from '../screens/UserQuizzesScreen';
-import UpdateQuizScreen from '../screens/UpdateQuizzesScreen';
+import UserQuizzesScreen from '../screens/Profile/UserQuizzesScreen';
+import UpdateQuizScreen from '../screens/Profile/UpdateQuizzesScreen';
 const ProfileStack = createStackNavigator();
 
 const ProfileStackNavigator = () => {

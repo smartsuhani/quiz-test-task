@@ -1,5 +1,5 @@
 // src/redux/store.ts
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import {configureStore, combineReducers} from '@reduxjs/toolkit';
 import userReducer from './slices/userSlice';
 import quizzesSlice from './slices/quizzesSlice';
 import quizzesCategorySlice from './slices/quizzesCategorySlice';

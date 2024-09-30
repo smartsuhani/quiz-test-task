@@ -4,13 +4,9 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {useSelector} from 'react-redux';
 import {selectLogin} from '../redux/slices/userSlice';
-import AppLoadingScreen from '../screens/AppLoadingScreen';
-import HomeScreen from '../screens/Quizz/HomeScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-import SplashScreen from '../screens/SplashScreen';
-import AppCheckScreen from '../screens/AppCheckScreen';
-import SignInScreen from '../screens/SignInScreen';
-import SignUpScreen from '../screens/SignUpScreen';
+import SplashScreen from '../screens/Auth/SplashScreen';
+import AppCheckScreen from '../screens/Auth/AppCheckScreen';
+import SignInScreen from '../screens/Auth/SignInScreen';
 import TabNavigator from './TabNavigator';
 
 const MainStack = createStackNavigator();
@@ -30,7 +26,6 @@ const MainNavigation = (): React.ReactElement => {
           <>
             <MainStack.Screen name="Splash" component={SplashScreen} />
             <MainStack.Screen name="SignIn" component={SignInScreen} />
-            <MainStack.Screen name="SignUp" component={SignUpScreen} />
           </>
         )}
       </MainStack.Navigator>

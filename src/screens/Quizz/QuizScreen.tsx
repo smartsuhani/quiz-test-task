@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#000'
+    color: '#000',
   },
   optionsContainer: {
     marginTop: 30,
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginVertical: 10,
-    color: '#000'
+    color: '#000',
   },
   feedbackButtons: {
     flexDirection: 'row',
@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
   feedbackButtonText: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#000'
+    color: '#000',
   },
 });
 

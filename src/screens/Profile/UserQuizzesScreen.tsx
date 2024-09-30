@@ -14,12 +14,12 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../redux/store';
+import {RootState} from '../../redux/store';
 import {
   fetchAllQuizzes,
   deleteUserQuizData,
   selectAllOwnQuizzes,
-} from '../redux/slices/userOwnQuizSlice';
+} from '../../redux/slices/userOwnQuizSlice';
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
@@ -143,7 +143,7 @@ const UserQuizzesScreen = (): React.ReactElement => {
         <View style={styles.blankView}>
           <MaterialCommunityIcons name="delete-empty" size={40} color="#000" />
           <Text style={styles.blankMessage}>
-            {`Unable to fetched content\n for this category`}
+            {'Unable to fetched content\n for this category'}
           </Text>
         </View>
       ) : (
@@ -182,7 +182,7 @@ const UserQuizzesScreen = (): React.ReactElement => {
         <View style={styles.blankView}>
           <MaterialCommunityIcons name="delete-empty" size={40} color="#000" />
           <Text style={styles.blankMessage}>
-            {`Unable to fetched content\n for this category`}
+            {'Unable to fetched content\n for this category'}
           </Text>
         </View>
       ) : (
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#000'
+    color: '#000',
   },
   categorySelector: {
     marginBottom: 16,

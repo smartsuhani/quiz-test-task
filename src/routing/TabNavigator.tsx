@@ -1,11 +1,10 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import ProfileScreen from '../screens/ProfileScreen';
-import AddQuizScreen from '../screens/AddQuizScreen'; // Import the new HomeStackNavigator
+import AddQuizScreen from '../screens/AddQuizz/AddQuizScreen'; // Import the new HomeStackNavigator
 import Icon from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import HomeStackNavigator from "./HomeNavigation";
-import ProfileStackNavigator from "./ProfileNavigation";
+import HomeStackNavigator from './HomeNavigation';
+import ProfileStackNavigator from './ProfileNavigation';
 
 const Tab = createBottomTabNavigator();
 
