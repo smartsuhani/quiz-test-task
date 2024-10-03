@@ -25,6 +25,7 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import CustomHeader from '../../component/CustomHeader';
 
 const UserAttemptedQuizzesScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -120,10 +121,7 @@ const UserAttemptedQuizzesScreen: React.FC = () => {
   return (
     <SafeAreaProvider
       style={[styles.container, {paddingTop: inset.top, paddingBottom: 0}]}>
-      <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
-        <Feather name="arrow-left" size={30} color="black" />
-        <Text style={styles.title}>Attempted Quizzes</Text>
-      </TouchableOpacity>
+      <CustomHeader title="Attempted Quizzes" />
       {filteredQuizzes().length === 0 ? (
         <View style={styles.blankView}>
           <MaterialCommunityIcons name="delete-empty" size={40} color="#000" />
@@ -132,7 +130,7 @@ const UserAttemptedQuizzesScreen: React.FC = () => {
           </Text>
         </View>
       ) : (
-        <>
+        <View style={{marginHorizontal: 16}}>
           <View>
             <ScrollView
               horizontal
@@ -141,10 +139,12 @@ const UserAttemptedQuizzesScreen: React.FC = () => {
               contentContainerStyle={styles.categoryScroll}>
               <TouchableOpacity
                 onPress={() => handleCategoryChange('All')}
-                style={[
-                  styles.categoryItem,
-                  selectedCategory === 'All' && styles.selectedCategory,
-                ]}>
+                style={
+                  ([
+                    styles.categoryItem,
+                    selectedCategory === 'All' && styles.selectedCategory,
+                  ])
+                }>
                 <Text style={styles.categoryText}>All</Text>
               </TouchableOpacity>
               {userQuizData &&
@@ -168,7 +168,7 @@ const UserAttemptedQuizzesScreen: React.FC = () => {
             contentContainerStyle={styles.quizList}
             showsVerticalScrollIndicator={false}
           />
-        </>
+        </View>
       )}
     </SafeAreaProvider>
   );
@@ -177,7 +177,6 @@ const UserAttemptedQuizzesScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#fff',
   },
   title: {
@@ -221,7 +220,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   quizList: {
-    paddingBottom: 20,
+    paddingBottom: 200,
   },
   backButton: {
     flexDirection: 'row',

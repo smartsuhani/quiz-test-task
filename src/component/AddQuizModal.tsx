@@ -1,5 +1,5 @@
 // src/screens/AddQuizScreen.tsx
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -13,26 +13,28 @@ import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import CustomDropdown from '../../component/CustomDropdown';
 import {useDispatch, useSelector} from 'react-redux';
-import {RootState} from '../../redux/store';
+
 import {
   fetchQuizzesCategory,
   selectAllQuizzesCategory,
-} from '../../redux/slices/quizzesCategorySlice';
-import {addQuizData} from '../../redux/slices/userOwnQuizSlice';
+} from '../redux/slices/quizzesCategorySlice';
+import {addQuizData} from '../redux/slices/userOwnQuizSlice';
 import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
-import useQuizForm from '../../hooks/useQuizForm'; // Import the custom hook
+import useQuizForm from '../hooks/useQuizForm';
+import CustomDropdown from './CustomDropdown';
+import {RootState} from '../redux/store'; // Import the custom hook
 
-const AddQuizScreen = (): React.ReactElement => {
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const navigation = useNavigation();
+interface AddQuizModalProps {
+  show: boolean;
+  onClose: () => void;
+}
+
+const AddQuizModal: React.FC<AddQuizModalProps> = ({show, onClose}) => {
   const user = useSelector((state: RootState) => state.user);
+  const navigation = useNavigation();
   const dispatch = useDispatch();
-
   const quizzesCategory = useSelector(selectAllQuizzesCategory);
-
-  // Use the custom hook here
   const {
     question,
     setQuestion,
@@ -47,29 +49,25 @@ const AddQuizScreen = (): React.ReactElement => {
     resetForm,
   } = useQuizForm();
 
-  useEffect(() => {
-    console.log('Modal Visible:', modalVisible);
-  }, [modalVisible]);
-
-  useFocusEffect(
-    useCallback(() => {
-      dispatch(fetchQuizzesCategory());
-      setModalVisible(true); // Show modal on focus
-      return () => {
-        setModalVisible(false); // Hide modal on unfocus
-      };
-    }, []),
-  );
-
+  const [showModal, setShowModal] = useState(show);
   const LeaveTypes = quizzesCategory.map(category => ({
     label: category.name,
     value: category.name,
   }));
 
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(fetchQuizzesCategory());
+    }, []),
+  );
+
+  useEffect(() => {
+    setShowModal(show);
+  }, [show]);
+
   const handleCloseModal = () => {
     resetForm();
-    setModalVisible(false);
-    navigation.navigate('Home');
+    onClose();
   };
 
   const handleAddQuiz = () => {
@@ -123,9 +121,12 @@ const AddQuizScreen = (): React.ReactElement => {
               },
             },
             {
-              text: 'Go Back to Home',
+              text: 'Check Quiz Lists',
               onPress: () => {
-                handleCloseModal(); // Close the modal and navigate back
+                resetForm();
+                onClose();
+                setShowModal(false);
+                navigation.navigate('UserQuizzesScreen');
               },
             },
           ],
@@ -157,10 +158,7 @@ const AddQuizScreen = (): React.ReactElement => {
 
   return (
     <View>
-      <Modal
-        animationInTiming={200}
-        style={styles.modal}
-        isVisible={modalVisible}>
+      <Modal animationInTiming={200} style={styles.modal} isVisible={showModal}>
         <View style={styles.modalContent}>
           <View style={styles.header}>
             <Text style={styles.title}>Add Quiz</Text>
@@ -188,7 +186,7 @@ const AddQuizScreen = (): React.ReactElement => {
                         </Text>
                       </TouchableOpacity>
                     )}
-                    <View style={{marginHorizontal: 16, marginTop: 30}}>
+                    <View style={{marginHorizontal: 16}}>
                       <CustomDropdown
                         title={'Select Correct Answer'}
                         subTitle={'Correct Answer'}
@@ -260,7 +258,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     borderRadius: 5,
     justifyContent: 'center',
-    marginVertical: 20,
+    marginBottom: 20,
+    marginTop: 4,
   },
   questionInput: {
     fontSize: 16,
@@ -287,7 +286,7 @@ const styles = StyleSheet.create({
   optionContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 20,
     backgroundColor: '#C9DFEF',
     borderColor: 'gray',
     padding: 10,
@@ -304,7 +303,6 @@ const styles = StyleSheet.create({
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
     marginLeft: 16,
     gap: 10,
   },
@@ -327,4 +325,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddQuizScreen;
+export default AddQuizModal;

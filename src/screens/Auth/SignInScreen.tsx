@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   TextInput,
@@ -9,6 +9,7 @@ import {
   View,
   ActivityIndicator,
   Platform,
+  Animated,
 } from 'react-native';
 import Modal from 'react-native-modal'; // Ensure you have installed this package
 import {useDispatch, useSelector} from 'react-redux';
@@ -25,6 +26,8 @@ import {
 import auth from '@react-native-firebase/auth';
 import FastImage from 'react-native-fast-image';
 import Images from '../../utils/Images';
+import Icon from 'react-native-vector-icons/Ionicons'; // Import the Icon component
+import ProgressBar from 'react-native-progress/Bar';
 
 const AuthScreen = () => {
   const [email, setEmail] = useState('');
@@ -34,20 +37,30 @@ const AuthScreen = () => {
   const [isLoginModalVisible, setLoginModalVisible] = useState(true); // Forgot password modal visibility
   const [resetEmail, setResetEmail] = useState(''); // Email for password reset
   const [isLoading, setIsLoading] = useState(false); // Loading state for reset password
+  const [isPasswordVisible, setPasswordVisible] = useState(false); // State to toggle password visibility
 
   const dispatch = useDispatch();
   const isSubmitting = useSelector(selectIsSubmitting);
   const loginMessage = useSelector(selectLoginMessage);
 
+  useEffect(() => {
+    const av = new Animated.Value(0);
+    av.addListener(() => {
+      return;
+    });
+  }, []);
+
   const handleLogin = async () => {
     dispatch(setLoginMessage(''));
     dispatch(setSubmitting(true));
     try {
+      setLoginModalVisible(false);
       await firebaseLogin(email, password);
       setLoginModalVisible(false);
       const user = auth().currentUser;
       dispatch(setLogin({email: email, uid: user.uid}));
     } catch (error) {
+      setLoginModalVisible(true);
       dispatch(setLoginMessage(error.message));
     } finally {
       dispatch(setSubmitting(false));
@@ -57,10 +70,12 @@ const AuthScreen = () => {
   const handleSignup = async () => {
     dispatch(setSubmitting(true));
     try {
+      setLoginModalVisible(false);
       await firebaseSignup(email, password);
       const user = auth().currentUser;
       dispatch(setLogin({email: email, uid: user.uid}));
     } catch (error) {
+      setLoginModalVisible(true);
       dispatch(setLoginMessage(error.message));
     } finally {
       dispatch(setSubmitting(false));
@@ -94,10 +109,23 @@ const AuthScreen = () => {
   return (
     <View style={{flex: 1, backgroundColor: '#f5f5f5'}}>
       <FastImage
-        style={{height: '100%', width: '100%'}}
+        style={{height: '100%', width: '100%', zIndex: -999}}
         source={Images.loginCartoon}
         resizeMode={FastImage.resizeMode.cover}
       />
+      {isSubmitting && (
+        <View style={styles.loadingContainer}>
+          <ProgressBar
+            width={209}
+            height={5}
+            color={'#5591BD'}
+            unfilledColor={'grey'}
+            borderWidth={0}
+            indeterminate={true}
+            useNativeDriver={true}
+          />
+        </View>
+      )}
       <Modal
         isVisible={isLoginModalVisible}
         backdropOpacity={0}
@@ -142,11 +170,6 @@ const AuthScreen = () => {
                 </TouchableOpacity>
               </View>
 
-              {/* Title changes based on the mode */}
-              {/*<Text style={styles.title}>*/}
-              {/*  {isLoginMode ? 'Sign In' : 'Sign Up'}*/}
-              {/*</Text>*/}
-
               <TextInput
                 style={styles.input}
                 placeholder="Email"
@@ -154,13 +177,27 @@ const AuthScreen = () => {
                 onChangeText={setEmail}
                 autoCapitalize="none"
               />
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-              />
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={[
+                    styles.input,
+                    {flex: 1, borderWidth: 0, marginBottom: 0, marginRight: 10},
+                  ]}
+                  placeholder="Password"
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!isPasswordVisible}
+                />
+                <TouchableOpacity
+                  style={styles.eyeIcon}
+                  onPress={() => setPasswordVisible(!isPasswordVisible)}>
+                  <Icon
+                    name={isPasswordVisible ? 'eye-off' : 'eye'}
+                    size={20}
+                    color="#000"
+                  />
+                </TouchableOpacity>
+              </View>
 
               <TouchableOpacity
                 style={styles.button}
@@ -176,7 +213,19 @@ const AuthScreen = () => {
               </TouchableOpacity>
 
               {loginMessage ? (
-                <Text style={styles.error}>{loginMessage}</Text>
+                <Text
+                  style={[
+                    styles.error,
+                    {
+                      color: loginMessage.includes('successfully')
+                        ? 'green'
+                        : 'red',
+                    },
+                  ]}>
+                  {loginMessage.includes('successfully')
+                    ? loginMessage
+                    : loginMessage.split(']')[1].trim()}
+                </Text>
               ) : null}
 
               {
@@ -270,7 +319,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 40,
     borderWidth: 2,
-    borderColor: '#C9DFEF',
+    borderColor: '#5591BD',
     borderRadius: 10,
     backgroundColor: '#fff',
     overflow: 'hidden',
@@ -333,6 +382,8 @@ const styles = StyleSheet.create({
   error: {
     color: 'red',
     marginTop: 8,
+    textAlign: 'center',
+    alignSelf: 'center',
   },
   forgotPassword: {
     color: 'grey',
@@ -352,6 +403,21 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 16,
     width: '100%',
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    // flex: 1,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    marginBottom: 15,
+  },
+  eyeIcon: {
+    // position: 'absolute',
+    right: 10,
+    alignSelf: 'center',
   },
   modalButton: {
     backgroundColor: '#4285F4',
@@ -374,6 +440,15 @@ const styles = StyleSheet.create({
   disabledButton: {
     backgroundColor: '#b3d1ff',
   },
+  loadingContainer: {
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    left: 0,
+    top: 0,
+    bottom: -500,
+    right: 0,
+  },
 });
-
 export default AuthScreen;

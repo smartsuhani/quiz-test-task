@@ -25,6 +25,7 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import {array} from 'yup';
+import CustomHeader from "../../component/CustomHeader";
 
 const UserQuizzesScreen = (): React.ReactElement => {
   const dispatch = useDispatch();
@@ -135,10 +136,7 @@ const UserQuizzesScreen = (): React.ReactElement => {
   return (
     <SafeAreaProvider
       style={[styles.container, {paddingTop: inset.top, paddingBottom: 0}]}>
-      <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
-        <Feather name="arrow-left" size={30} color="black" />
-        <Text style={styles.title}>My Quizzes</Text>
-      </TouchableOpacity>
+      <CustomHeader title="My Quizzes" />
       {selectedCategory === 'All' && filteredQuizzes.length === 0 ? (
         <View style={styles.blankView}>
           <MaterialCommunityIcons name="delete-empty" size={40} color="#000" />

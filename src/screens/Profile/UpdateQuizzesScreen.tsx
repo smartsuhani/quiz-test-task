@@ -107,6 +107,7 @@ const UpdateQuizScreen = ({
   };
 
   const deleteOption = (index: number) => {
+    console.log(index);
     if (optionsMessage.length > 2) {
       const newOptions = [...optionsMessage];
       newOptions.splice(index, 1);
@@ -115,6 +116,7 @@ const UpdateQuizScreen = ({
   };
 
   const handleOptionChange = (text: string, index: number) => {
+    console.log('Test message---', optionsMessage);
     const newOptions = [...optionsMessage];
     newOptions[index] = text;
     setOptionsMessage(newOptions);
@@ -122,14 +124,15 @@ const UpdateQuizScreen = ({
 
   const renderOptions = ({item, index}: {item: string; index: number}) => (
     <View style={styles.optionContainer}>
+      {console.log(item, index)}
       <TextInput
         style={styles.optionInput}
-        placeholder={`Option ${index + 1}`}
+        placeholder={`Option ${index}`}
         value={item}
-        onChangeText={text => handleOptionChange(text, index)}
+        onChangeText={text => handleOptionChange(text, index - 1)}
       />
       {optionsMessage.length > 2 && (
-        <TouchableOpacity onPress={() => deleteOption(index)}>
+        <TouchableOpacity onPress={() => deleteOption(index - 1)}>
           <FontAwesome name={'trash'} size={24} color={'#F38686'} />
         </TouchableOpacity>
       )}
@@ -185,7 +188,7 @@ const UpdateQuizScreen = ({
                         </Text>
                       </TouchableOpacity>
                     )}
-                    <View style={{marginTop: 30}}>
+                    <View style={{marginTop: 5}}>
                       <CustomDropdown
                         title={'Select Correct Answer'}
                         subTitle={'Correct Answer'}
@@ -237,7 +240,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     borderRadius: 5,
     justifyContent: 'center',
-    marginVertical: 20,
+    marginVertical: 16,
   },
   questionInput: {
     fontSize: 16,
@@ -273,7 +276,7 @@ const styles = StyleSheet.create({
   optionContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 16,
     backgroundColor: '#C9DFEF',
     borderColor: 'gray',
     padding: 10,
@@ -291,7 +294,6 @@ const styles = StyleSheet.create({
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
     gap: 10,
   },
   title: {
@@ -305,7 +307,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: 'center',
     marginVertical: 16,
-    marginTop: 40,
+    marginTop: 30,
   },
   buttonText: {
     color: '#fff',

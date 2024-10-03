@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {
   View,
   Text,
@@ -12,7 +12,7 @@ import {
   Alert,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import {
@@ -28,6 +28,8 @@ import {setLogout} from '../../redux/slices/userSlice';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modal';
+import CustomHeader from '../../component/CustomHeader';
+import Icon from 'react-native-vector-icons/Ionicons';
 const ProfileScreen: React.FC = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -45,9 +47,19 @@ const ProfileScreen: React.FC = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isFocus, setIsFocus] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      setIsFocus(false);
+    }, []),
+  );
 
   useEffect(() => {
     dispatch(fetchFullName());
+    return () => {
+      setIsFocus(false);
+    };
   }, [dispatch]);
 
   useEffect(() => {
@@ -64,7 +76,7 @@ const ProfileScreen: React.FC = () => {
       dispatch(setLogout({message: 'Logged out successfully'})); // Dispatch logout action
       dispatch({type: 'LOGOUT'});
       dispatch(clearUserProfile());
-      navigation.navigate('Login');
+      navigation.navigate('SignIn');
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -112,15 +124,24 @@ const ProfileScreen: React.FC = () => {
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.keyboardAvoidingView}>
-        <TouchableOpacity
-          style={[
-            styles.saveButton,
-            !isSaveEnabled && styles.saveButtonDisabled,
-          ]}
-          onPress={handleSave}
-          disabled={!isSaveEnabled}>
-          <Text style={styles.saveButtonText}>Save</Text>
-        </TouchableOpacity>
+        <View style={styles.topNav}>
+          <TouchableOpacity
+            style={[styles.backButton]}
+            onPress={() => {
+              navigation.goBack();
+            }}>
+            <Icon name="arrow-back" size={24} color="#000" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.saveButton,
+              !isSaveEnabled && styles.saveButtonDisabled,
+            ]}
+            onPress={handleSave}
+            disabled={!isSaveEnabled}>
+            <Text style={styles.saveButtonText}>Save</Text>
+          </TouchableOpacity>
+        </View>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollViewContent}>
@@ -137,8 +158,13 @@ const ProfileScreen: React.FC = () => {
               <>
                 {error && <Text style={styles.errorText}>{error}</Text>}
                 <TextInput
-                  style={styles.fullNameInput}
+                  style={[
+                    styles.fullNameInput,
+                    {borderBottomWidth: isFocus ? 1 : 0},
+                  ]}
                   value={fullName}
+                  onFocus={() => setIsFocus(true)}
+                  onBlur={() => setIsFocus(false)}
                   onChangeText={setFullNameState}
                   placeholderTextColor={'#808080'}
                   placeholder="Full Name"
@@ -290,6 +316,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
+  topNav: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginHorizontal: 16,
+    backgroundColor: 'transparent',
+  },
   scrollViewContent: {
     flexGrow: 1,
     justifyContent: 'center',
@@ -297,14 +330,15 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   saveButton: {
-    alignSelf: 'flex-end',
+    alignSelf: 'center',
     backgroundColor: '#5591BD',
     padding: 10,
     borderRadius: 8,
-    marginBottom: 20,
-    position: 'absolute',
-    top: 20,
-    right: 20,
+    zIndex: 999,
+  },
+  backButton: {
+    alignSelf: 'center',
+    borderRadius: 8,
     zIndex: 999,
   },
   seperator: {
@@ -343,8 +377,10 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 0,
+    marginBottom: 5,
     color: '#000',
+    width: '70%',
+    paddingBottom: 5,
   },
   email: {
     fontSize: 16,

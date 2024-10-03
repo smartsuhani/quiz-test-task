@@ -25,7 +25,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = props => {
   const renderLabel = () => {
     if (value || isFocus) {
       return (
-        <Text style={[styles.label, isFocus && {color: '#C9DFEF'}]}>
+        <Text style={[styles.label, isFocus && {color: 'black'}]}>
           {subTitle}
         </Text>
       );

@@ -17,6 +17,7 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import FastImage from 'react-native-fast-image';
+
 import {fetchQuizzesCategory} from '../../redux/slices/quizzesCategorySlice';
 import {clearUserQuizData} from '../../redux/slices/getUserQuizesSlice';
 import {
@@ -28,6 +29,8 @@ import {
 } from '../../redux/slices/userProfileSlice';
 import {initializeUserPointsListener} from '../../redux/slices/userPointsSlice';
 import Modal from 'react-native-modal';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AddQuizModal from '../../component/AddQuizModal';
 
 const HomeScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -45,6 +48,7 @@ const HomeScreen = () => {
   const loading = useSelector(selectUserProfileLoading);
   const userNames = useSelector(selectUserNames);
   const [isModalVisible, setModalVisible] = useState(false); // New state for modal visibility
+  const [addQuizModal, setAddQuizModal] = useState(false); // New state for modal visibility
 
   useEffect(() => {
     if (storedFullName === undefined || storedFullName?.length === 0) {
@@ -151,13 +155,19 @@ const HomeScreen = () => {
           {!loading && <Text style={styles.greeting}>Hi, {fullName}</Text>}
           <Text style={styles.subText}>Let's make this day productive</Text>
         </View>
-        <FastImage
-          source={{
-            uri: 'https://www.shutterstock.com/image-vector/young-smiling-man-adam-avatar-600nw-2107967969.jpg',
-          }} // Replace with your avatar image URL or local image
-          style={styles.avatar}
-          fallback={Platform.OS === 'android'}
-        />
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => {
+            navigation.navigate('ProfileScreen');
+          }}>
+          <FastImage
+            source={{
+              uri: 'https://www.shutterstock.com/image-vector/young-smiling-man-adam-avatar-600nw-2107967969.jpg',
+            }} // Replace with your avatar image URL or local image
+            style={styles.avatar}
+            fallback={Platform.OS === 'android'}
+          />
+        </TouchableOpacity>
       </View>
       <TouchableOpacity
         activeOpacity={1}
@@ -181,6 +191,7 @@ const HomeScreen = () => {
           </View>
         </View>
       </TouchableOpacity>
+
       <FlatList
         data={quizzesCategory}
         numColumns={2}
@@ -250,6 +261,19 @@ const HomeScreen = () => {
               </TouchableOpacity>
             </View>
             <FlatList
+              snapToStart={false}
+              stickyHeaderIndices={[0]}
+              bounces={false}
+              contentContainerStyle={{paddingBottom: 40, paddingHorizontal: 5}}
+              ListHeaderComponent={() => (
+                <View style={styles.leaderboardHeader}>
+                  <Text style={styles.leaderboardRank}>No.</Text>
+                  <Text style={[styles.leaderboardName, {fontWeight: 'bold'}]}>
+                    Name
+                  </Text>
+                  <Text style={styles.leaderboardPoints}>Attempt</Text>
+                </View>
+              )}
               data={sortedLeaderboardData}
               renderItem={renderLeaderboardItem}
               keyExtractor={item => item.id}
@@ -257,6 +281,26 @@ const HomeScreen = () => {
           </View>
         </SafeAreaProvider>
       </Modal>
+      <TouchableOpacity
+        onPress={() => {
+          setAddQuizModal(true);
+        }}
+        style={styles.postContainer}>
+        <View style={styles.postView}>
+          <MaterialIcons
+            name="add"
+            color={'white'}
+            size={24}
+            style={{marginRight: 8}}
+          />
+          <Text style={{color: 'white', fontSize: 16}}>Add Quiz</Text>
+        </View>
+      </TouchableOpacity>
+
+      <AddQuizModal
+        show={addQuizModal}
+        onClose={() => setAddQuizModal(false)}
+      />
     </SafeAreaProvider>
   );
 };
@@ -492,15 +536,58 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#000',
+    flex: 0.23,
+    textAlign: 'left',
   },
   leaderboardName: {
     fontSize: 16,
     color: '#000',
+    flex: 0.53,
+    textAlign: 'left',
   },
   leaderboardPoints: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#000',
+    flex: 0.33,
+    textAlign: 'right',
+  },
+  leaderboardHeader: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'lightgrey',
+    justifyContent: 'space-between',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  postContainer: {
+    elevation: 8,
+    shadowColor: 'black',
+    shadowOffset: {
+      width: 0,
+      height: 20,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 40,
+    alignItems: 'flex-start',
+    display: 'flex',
+    position: 'absolute',
+    bottom: 35,
+    right: 21,
+    borderRadius: 30,
+    zIndex: 999,
+    backgroundColor: '#5591BD',
+  },
+  postView: {
+    paddingVertical: 11,
+    paddingHorizontal: 20,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    // backgroundColor: '#5591BD'
   },
 });
 
