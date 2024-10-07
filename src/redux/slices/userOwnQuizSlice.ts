@@ -1,4 +1,4 @@
-import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
+import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {firebase} from '@react-native-firebase/database';
 import {RootState} from '../store';
 
@@ -134,20 +134,20 @@ const quizSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(addQuizData.pending, state => {
+      .addCase(addQuizData.pending, (state: QuizState) => {
         state.status = 'loading';
       })
-      .addCase(addQuizData.fulfilled, state => {
+      .addCase(addQuizData.fulfilled, (state: QuizState) => {
         state.status = 'succeeded';
       })
-      .addCase(addQuizData.rejected, (state, action) => {
+      .addCase(addQuizData.rejected, (state: QuizState, action: any) => {
         state.status = 'failed';
         state.error = action.error.message || 'Failed to add quiz data';
       })
-      .addCase(fetchQuizzes.pending, state => {
+      .addCase(fetchQuizzes.pending, (state: QuizState) => {
         state.status = 'loading';
       })
-      .addCase(fetchQuizzes.fulfilled, (state, action) => {
+      .addCase(fetchQuizzes.fulfilled, (state: QuizState, action: any) => {
         const {userId, category} = action.meta.arg;
         if (!state.quizzes[userId]) {
           state.quizzes[userId] = {};
@@ -155,42 +155,45 @@ const quizSlice = createSlice({
         state.quizzes[userId][category] = action.payload;
         state.status = 'succeeded';
       })
-      .addCase(fetchQuizzes.rejected, (state, action) => {
+      .addCase(fetchQuizzes.rejected, (state: QuizState, action: any) => {
         state.status = 'failed';
         state.error = action.error.message || 'Failed to fetch quizzes';
       })
-      .addCase(fetchAllQuizzes.pending, state => {
+      .addCase(fetchAllQuizzes.pending, (state: QuizState) => {
         state.status = 'loading';
       })
-      .addCase(fetchAllQuizzes.fulfilled, (state, action) => {
+      .addCase(fetchAllQuizzes.fulfilled, (state: QuizState, action) => {
         state.quizzes = action.payload; // Replace the current quizzes with all fetched quizzes
         state.status = 'succeeded';
       })
-      .addCase(fetchAllQuizzes.rejected, (state, action) => {
+      .addCase(fetchAllQuizzes.rejected, (state: QuizState, action: any) => {
         state.status = 'failed';
         state.error = action.error.message || 'Failed to fetch all quizzes';
       })
-      .addCase(updateUserQuizData.pending, state => {
+      .addCase(updateUserQuizData.pending, (state: QuizState) => {
         state.status = 'loading';
       })
-      .addCase(updateUserQuizData.fulfilled, state => {
+      .addCase(updateUserQuizData.fulfilled, (state: QuizState) => {
         state.status = 'succeeded';
       })
-      .addCase(updateUserQuizData.rejected, (state, action) => {
+      .addCase(updateUserQuizData.rejected, (state: QuizState, action: any) => {
         state.status = 'failed';
         state.error = action.error.message || 'Failed to update quiz data';
       })
-      .addCase(deleteUserQuizData.pending, state => {
+      .addCase(deleteUserQuizData.pending, (state: QuizState) => {
         state.status = 'loading';
       })
-      .addCase(deleteUserQuizData.fulfilled, (state, action) => {
-        const {userId, category, quizId} = action.meta.arg;
-        if (state.quizzes[userId] && state.quizzes[userId][category]) {
-          delete state.quizzes[userId][category][quizId];
-        }
-        state.status = 'succeeded';
-      })
-      .addCase(deleteUserQuizData.rejected, (state, action) => {
+      .addCase(
+        deleteUserQuizData.fulfilled,
+        (state: QuizState, action: any) => {
+          const {userId, category, quizId} = action.meta.arg;
+          if (state.quizzes[userId] && state.quizzes[userId][category]) {
+            delete state.quizzes[userId][category][quizId];
+          }
+          state.status = 'succeeded';
+        },
+      )
+      .addCase(deleteUserQuizData.rejected, (state: QuizState, action: any) => {
         state.status = 'failed';
         state.error = action.error.message || 'Failed to delete quiz data';
       });

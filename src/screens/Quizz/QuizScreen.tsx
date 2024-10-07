@@ -81,6 +81,7 @@ const QuizScreen: React.FC = () => {
       dispatch(fetchUserQuizData({uid, category}));
     }
   }, [uid, category]);
+  console.log('HERE IS QUIZZ DATA', userQuizData);
   // Filter out attempted quizzes
   const availableQuizzes =
     userQuizData && userQuizDataStatus === 'succeeded'
@@ -177,95 +178,95 @@ const QuizScreen: React.FC = () => {
   );
 
   return (
-    <ImageBackground
-      source={images.backImg}
-      style={styles.imageBackground}
-      resizeMode="cover">
-      <SafeAreaProvider style={styles.safeAreaView}>
-        {initialModal && (
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={handleExit}
-            style={[styles.closeButton, {top: inset.top, zIndex: 999}]}>
-            <Entypo name="cross" size={30} color="black" />
-          </TouchableOpacity>
-        )}
-        <ScrollView contentContainerStyle={{marginTop: inset.top, flexGrow: 1}}>
-          {initialModal ? (
-            <>
-              <View style={styles.modalContainer}>
-                <Text style={styles.modalTitle}>Quizzes...</Text>
-                <Text style={styles.modalSubtitle}>for</Text>
-                <Text style={styles.modalCategory}>{category}</Text>
-              </View>
-              <TouchableOpacity
-                onPress={() => setInitialModal(false)}
-                style={[styles.startButton, {bottom: inset.bottom + 20}]}>
-                <Text style={styles.startButtonText}>Start Now</Text>
-              </TouchableOpacity>
-            </>
-          ) : (
-            <View style={styles.container}>
-              <View style={styles.timerContainer}>
-                <Text style={styles.timerText}>{timer}s</Text>
-              </View>
-              <View style={styles.questionContainer}>
-                <Text style={styles.questionText}>
-                  {currentQuestion.question}
-                </Text>
-              </View>
-              <View style={styles.optionsContainer}>
-                {sortedOptions.map(([key, option], index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={[
-                      styles.optionButton,
-                      isAnswered &&
-                        option === currentQuestion.correct_answer &&
-                        styles.correctOption,
-                      isAnswered &&
-                        isCorrect === false &&
-                        option !== currentQuestion.correct_answer &&
-                        styles.wrongOption,
-                    ]}
-                    onPress={() => !isAnswered && handleAnswer(option)}
-                    disabled={isAnswered}>
-                    <Text style={styles.optionText}>{`${key}: ${option}`}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-              {isAnswered && (
-                <View style={styles.feedbackContainer}>
-                  <Text style={styles.feedbackText}>
-                    {isCorrect
-                      ? 'Correct Answer!'
-                      : `Oops! The correct answer is: ${currentQuestion.correct_answer}`}
-                  </Text>
-                  <View style={styles.feedbackButtons}>
-                    <TouchableOpacity
-                      style={styles.feedbackButton}
-                      onPress={handleExit}>
-                      <Text style={styles.feedbackButtonText}>Exit</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.feedbackButton}
-                      onPress={handleNextQuestion}>
-                      <Text style={styles.feedbackButtonText}>Next</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              )}
+    // <ImageBackground
+    //   source={images.backImg}
+    //   style={styles.imageBackground}
+    //   resizeMode="cover">
+    <SafeAreaProvider style={styles.safeAreaView}>
+      {initialModal && (
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={handleExit}
+          style={[styles.closeButton, {top: inset.top, zIndex: 999}]}>
+          <Entypo name="cross" size={30} color="black" />
+        </TouchableOpacity>
+      )}
+      <ScrollView contentContainerStyle={{marginTop: inset.top, flexGrow: 1}}>
+        {initialModal ? (
+          <>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>Quizzes...</Text>
+              <Text style={styles.modalSubtitle}>for</Text>
+              <Text style={styles.modalCategory}>{category}</Text>
             </View>
-          )}
-        </ScrollView>
-      </SafeAreaProvider>
-    </ImageBackground>
+            <TouchableOpacity
+              onPress={() => setInitialModal(false)}
+              style={[styles.startButton, {bottom: inset.bottom + 20}]}>
+              <Text style={styles.startButtonText}>Start Now</Text>
+            </TouchableOpacity>
+          </>
+        ) : (
+          <View style={styles.container}>
+            <View style={styles.timerContainer}>
+              <Text style={styles.timerText}>{timer}s</Text>
+            </View>
+            <View style={styles.questionContainer}>
+              <Text style={styles.questionText}>
+                {currentQuestion.question}
+              </Text>
+            </View>
+            <View style={styles.optionsContainer}>
+              {sortedOptions.map(([key, option], index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.optionButton,
+                    isAnswered &&
+                      option === currentQuestion.correct_answer &&
+                      styles.correctOption,
+                    isAnswered &&
+                      isCorrect === false &&
+                      option !== currentQuestion.correct_answer &&
+                      styles.wrongOption,
+                  ]}
+                  onPress={() => !isAnswered && handleAnswer(option)}
+                  disabled={isAnswered}>
+                  <Text style={styles.optionText}>{`${key}: ${option}`}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            {isAnswered && (
+              <View style={styles.feedbackContainer}>
+                <Text style={styles.feedbackText}>
+                  {isCorrect
+                    ? 'Correct Answer!'
+                    : `Oops! The correct answer is: ${currentQuestion.correct_answer}`}
+                </Text>
+                <View style={styles.feedbackButtons}>
+                  <TouchableOpacity
+                    style={styles.feedbackButton}
+                    onPress={handleExit}>
+                    <Text style={styles.feedbackButtonText}>Exit</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.feedbackButton}
+                    onPress={handleNextQuestion}>
+                    <Text style={styles.feedbackButtonText}>Next</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+          </View>
+        )}
+      </ScrollView>
+    </SafeAreaProvider>
+    // </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   safeAreaView: {
-    backgroundColor: 'transparent',
+    backgroundColor: '#f5f5f5',
     flex: 1,
   },
   imageBackground: {
@@ -311,11 +312,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 16,
     right: 16,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
     height: 50,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
   },
   startButtonText: {
     fontSize: 16,
@@ -332,7 +338,7 @@ const styles = StyleSheet.create({
     height: 100,
     width: 100,
     borderRadius: 50,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
     position: 'relative',
     left: 0,
     right: 0,
@@ -340,6 +346,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 2, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
   },
   timerText: {
     fontSize: 18,
@@ -349,10 +360,15 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   questionContainer: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
     padding: 20,
     borderRadius: 10,
     marginTop: 10,
+    shadowColor: '#000',
+    shadowOffset: {width: 2, height: 6},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
   },
   questionText: {
     fontSize: 24,
@@ -420,7 +436,7 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   feedbackButton: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#5591BD',
     padding: 10,
     borderRadius: 5,
   },

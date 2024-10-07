@@ -1,6 +1,6 @@
 // src/redux/slices/userSlice.ts
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import { RootState } from "../store";
+import {RootState} from '../store';
 
 interface UserState {
   isLoggedIn: boolean;
@@ -22,7 +22,7 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setLogin(state, action: PayloadAction<{email: string, uid: string}>) {
+    setLogin(state, action: PayloadAction<{email: string; uid: string}>) {
       state.isLoggedIn = true;
       state.email = action.payload.email;
       state.uid = action.payload.uid;

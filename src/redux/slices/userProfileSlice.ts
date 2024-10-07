@@ -129,49 +129,52 @@ const userProfileSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(fetchFullName.pending, state => {
+      .addCase(fetchFullName.pending, (state: UserProfileState) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(
         fetchFullName.fulfilled,
-        (state, action: PayloadAction<string>) => {
+        (state: UserProfileState, action: PayloadAction<string>) => {
           state.loading = false;
           state.fullName = action.payload;
         },
       )
-      .addCase(fetchFullName.rejected, (state, action) => {
+      .addCase(fetchFullName.rejected, (state: UserProfileState, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
-      .addCase(updateFullName.pending, state => {
+      .addCase(updateFullName.pending, (state: UserProfileState) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(
         updateFullName.fulfilled,
-        (state, action: PayloadAction<string>) => {
+        (state: UserProfileState, action: PayloadAction<string>) => {
           state.loading = false;
           state.fullName = action.payload;
         },
       )
-      .addCase(updateFullName.rejected, (state, action) => {
+      .addCase(updateFullName.rejected, (state: UserProfileState, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
-      .addCase(fetchUserNames.pending, state => {
+      .addCase(fetchUserNames.pending, (state: UserProfileState) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(
         fetchUserNames.fulfilled,
-        (state, action: PayloadAction<Record<string, string>>) => {
+        (
+          state: UserProfileState,
+          action: PayloadAction<Record<string, string>>,
+        ) => {
           console.log(action.payload, 'ddddd');
           state.loading = false;
           state.userNames = action.payload;
         },
       )
-      .addCase(fetchUserNames.rejected, (state, action) => {
+      .addCase(fetchUserNames.rejected, (state: UserProfileState, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

@@ -48,17 +48,17 @@ const quizzesSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(fetchQuizzes.pending, state => {
+      .addCase(fetchQuizzes.pending, (state: QuizzesState) => {
         state.status = 'loading';
       })
       .addCase(
         fetchQuizzes.fulfilled,
-        (state, action: PayloadAction<Quiz[]>) => {
+        (state: QuizzesState, action: PayloadAction<Quiz[]>) => {
           state.status = 'succeeded';
-          state.quizzes = action.payload;
+          state.quizzes = action.payload || [];
         },
       )
-      .addCase(fetchQuizzes.rejected, (state, action) => {
+      .addCase(fetchQuizzes.rejected, (state: QuizzesState, action: any) => {
         state.status = 'failed';
         state.error = action.error.message || 'Failed to fetch quizzes';
       });

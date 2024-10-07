@@ -28,7 +28,6 @@ import {setLogout} from '../../redux/slices/userSlice';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modal';
-import CustomHeader from '../../component/CustomHeader';
 import Icon from 'react-native-vector-icons/Ionicons';
 const ProfileScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -76,7 +75,7 @@ const ProfileScreen: React.FC = () => {
       dispatch(setLogout({message: 'Logged out successfully'})); // Dispatch logout action
       dispatch({type: 'LOGOUT'});
       dispatch(clearUserProfile());
-      navigation.navigate('SignIn');
+      navigation.navigate('SignIn' as never);
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -94,7 +93,7 @@ const ProfileScreen: React.FC = () => {
       return;
     }
 
-    const user = auth().currentUser;
+    const user: any = auth().currentUser;
     if (user) {
       const emailCred = auth.EmailAuthProvider.credential(
         user?.email,
@@ -162,7 +161,7 @@ const ProfileScreen: React.FC = () => {
                     styles.fullNameInput,
                     {borderBottomWidth: isFocus ? 1 : 0},
                   ]}
-                  value={fullName}
+                  value={fullName as string}
                   onFocus={() => setIsFocus(true)}
                   onBlur={() => setIsFocus(false)}
                   onChangeText={setFullNameState}
@@ -182,51 +181,57 @@ const ProfileScreen: React.FC = () => {
             <TouchableOpacity
               style={styles.button}
               onPress={() => setIsModalVisible(true)}>
-              <View style={{flexDirection: 'row', gap: 10}}>
-                <MaterialIcons name={'password'} size={24} color={'#5591BD'} />
+              <View style={styles.changePasswordMain}>
+                <MaterialIcons
+                  name={'password'}
+                  size={24}
+                  color={'#5591BD' as number}
+                />
                 <Text style={styles.buttonText}>Change Password</Text>
               </View>
               <MaterialIcons
                 name={'keyboard-arrow-right'}
                 size={24}
-                color={'#5591BD'}
+                color={'#5591BD' as number}
               />
             </TouchableOpacity>
             <View style={styles.seperator} />
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate('UserQuizzesScreen')}>
-              <View style={{flexDirection: 'row', gap: 10}}>
+              onPress={() => navigation.navigate('UserQuizzesScreen' as never)}>
+              <View style={styles.myQuizMain}>
                 <MaterialIcons
                   name={'my-library-books'}
                   size={24}
-                  color={'#5591BD'}
+                  color={'#5591BD' as never}
                 />
                 <Text style={styles.buttonText}>My Quizzes</Text>
               </View>
               <MaterialIcons
                 name={'keyboard-arrow-right'}
                 size={24}
-                color={'#5591BD'}
+                color={'#5591BD' as number}
               />
             </TouchableOpacity>
             <View style={styles.seperator} />
 
             <TouchableOpacity
               style={styles.button}
-              onPress={() => navigation.navigate('UserAttemptedQuizzesScreen')}>
-              <View style={{flexDirection: 'row', gap: 10}}>
+              onPress={() =>
+                navigation.navigate('UserAttemptedQuizzesScreen' as never)
+              }>
+              <View style={styles.myQuizMain}>
                 <MaterialIcons
                   name={'view-carousel'}
                   size={24}
-                  color={'#5591BD'}
+                  color={'#5591BD' as number}
                 />
                 <Text style={styles.buttonText}>Attempted Quizzes</Text>
               </View>
               <MaterialIcons
                 name={'keyboard-arrow-right'}
                 size={24}
-                color={'#5591BD'}
+                color={'#5591BD' as number}
               />
             </TouchableOpacity>
             <View style={styles.seperator} />
@@ -236,8 +241,12 @@ const ProfileScreen: React.FC = () => {
                 {paddingVertical: 25, alignItems: 'center'},
               ]}
               onPress={handleLogout}>
-              <View style={{flexDirection: 'row', gap: 10}}>
-                <MaterialIcons name={'logout'} size={24} color={'#F38686'} />
+              <View style={styles.myQuizMain}>
+                <MaterialIcons
+                  name={'logout'}
+                  size={24}
+                  color={'#F38686' as number}
+                />
                 <Text style={[styles.buttonText, {color: '#F38686'}]}>
                   Logout
                 </Text>
@@ -322,6 +331,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginHorizontal: 16,
     backgroundColor: 'transparent',
+  },
+  changePasswordMain: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  myQuizMain: {
+    flexDirection: 'row',
+    gap: 10,
   },
   scrollViewContent: {
     flexGrow: 1,

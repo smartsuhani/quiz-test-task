@@ -22,7 +22,7 @@ const SplashScreen = ({navigation}): React.ReactElement => {
       duration: 3000,
       useNativeDriver: false, // We need native driver off to animate width properly
     }).start();
-  }, []);
+  }, [loaderWidth]);
 
   return (
     <View style={styles.container}>

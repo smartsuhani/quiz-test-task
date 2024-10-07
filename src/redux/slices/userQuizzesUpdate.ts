@@ -61,7 +61,7 @@ const userQuizDataSlice = createSlice<UserQuizState>({
   initialState,
   reducers: {
     // Optional: You can add other reducers for additional actions if necessary
-    clearUserQuizData: state => {
+    clearUserQuizData: (state: UserQuizState) => {
       state.userQuizData = {};
       state.status = 'idle';
       state.error = null;
@@ -75,7 +75,7 @@ const userQuizDataSlice = createSlice<UserQuizState>({
       .addCase(updateUserQuizData.fulfilled, state => {
         state.status = 'succeeded';
       })
-      .addCase(updateUserQuizData.rejected, (state, action) => {
+      .addCase(updateUserQuizData.rejected, (state, action: any) => {
         state.status = 'failed';
         state.error = action.error.message || 'Failed to update user quiz data';
       });

@@ -49,10 +49,13 @@ const quizzesCategorySlice = createSlice<QuizzesState>({
           state.quizzesCategory = action.payload;
         },
       )
-      .addCase(fetchQuizzesCategory.rejected, (state: QuizzesState, action) => {
-        state.status = 'failed';
-        state.error = action.error.message || 'Failed to fetch quizzes';
-      });
+      .addCase(
+        fetchQuizzesCategory.rejected,
+        (state: QuizzesState, action: any) => {
+          state.status = 'failed';
+          state.error = action.error.message || 'Failed to fetch quizzes';
+        },
+      );
   },
 });
 

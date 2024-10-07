@@ -1,5 +1,5 @@
 // src/screens/AddQuizScreen.tsx
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {Dispatch, useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -23,17 +23,23 @@ import {addQuizData} from '../redux/slices/userOwnQuizSlice';
 import {KeyboardAwareFlatList} from 'react-native-keyboard-aware-scroll-view';
 import useQuizForm from '../hooks/useQuizForm';
 import CustomDropdown from './CustomDropdown';
-import {RootState} from '../redux/store'; // Import the custom hook
-
+import {RootState} from '../redux/store';
+import {AsyncThunkAction} from '@reduxjs/toolkit';
+import {StackNavigationProp} from '@react-navigation/stack'; // Import the custom hook
+import {AppStackParamList} from '../navigations/MainNavigation';
 interface AddQuizModalProps {
   show: boolean;
   onClose: () => void;
 }
+type UserQuizzesScreenNavigationProp = StackNavigationProp<
+  AppStackParamList,
+  'UserQuizzesScreen'
+>;
 
 const AddQuizModal: React.FC<AddQuizModalProps> = ({show, onClose}) => {
   const user = useSelector((state: RootState) => state.user);
-  const navigation = useNavigation();
-  const dispatch = useDispatch();
+  const navigation = useNavigation<UserQuizzesScreenNavigationProp>();
+  const dispatch: Dispatch<AsyncThunkAction<any, any, any>> = useDispatch();
   const quizzesCategory = useSelector(selectAllQuizzesCategory);
   const {
     question,
@@ -58,7 +64,7 @@ const AddQuizModal: React.FC<AddQuizModalProps> = ({show, onClose}) => {
   useFocusEffect(
     useCallback(() => {
       dispatch(fetchQuizzesCategory());
-    }, []),
+    }, [dispatch]),
   );
 
   useEffect(() => {
@@ -126,7 +132,7 @@ const AddQuizModal: React.FC<AddQuizModalProps> = ({show, onClose}) => {
                 resetForm();
                 onClose();
                 setShowModal(false);
-                navigation.navigate('UserQuizzesScreen');
+                navigation.navigate('UserQuizzesScreen' as never);
               },
             },
           ],
@@ -150,7 +156,7 @@ const AddQuizModal: React.FC<AddQuizModalProps> = ({show, onClose}) => {
       />
       {optionsMessage.length > 2 && (
         <TouchableOpacity onPress={() => deleteOption(index)}>
-          <FontAwesome name={'trash'} size={24} color={'#F38686'} />
+          <FontAwesome name={'trash'} size={24} color={'#F38686' as number} />
         </TouchableOpacity>
       )}
     </View>
@@ -179,7 +185,7 @@ const AddQuizModal: React.FC<AddQuizModalProps> = ({show, onClose}) => {
                         <AntDesign
                           name={'plus'}
                           resizeMode="contain"
-                          color={'#5591BD'}
+                          color={'#5591BD' as Number}
                         />
                         <Text style={styles.addButtonText}>
                           Add another option
@@ -195,7 +201,7 @@ const AddQuizModal: React.FC<AddQuizModalProps> = ({show, onClose}) => {
                           value: option,
                         }))}
                         setSelectedValue={setCorrectAnswer}
-                        selectedValue={correctAnswer}
+                        selectedValue={correctAnswer.value}
                       />
                     </View>
                     <TouchableOpacity
@@ -215,7 +221,7 @@ const AddQuizModal: React.FC<AddQuizModalProps> = ({show, onClose}) => {
                         subTitle={'Selected Category'}
                         data={LeaveTypes}
                         setSelectedValue={setSelectedValue}
-                        selectedValue={selectedValue}
+                        selectedValue={selectedValue.value}
                       />
                       <View style={styles.mainView}>
                         <TextInput

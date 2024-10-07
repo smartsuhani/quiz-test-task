@@ -7,7 +7,6 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
-  ActivityIndicator,
 } from 'react-native';
 import ProgressBar from 'react-native-progress/Bar';
 import {useDispatch, useSelector} from 'react-redux';
@@ -23,7 +22,6 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
-import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CustomHeader from '../../component/CustomHeader';
 
@@ -115,9 +113,6 @@ const UserAttemptedQuizzesScreen: React.FC = () => {
   if (status === 'failed') {
     return <Text style={styles.error}>Error: {error}</Text>;
   }
-  const handleBackPress = () => {
-    navigation.goBack(); // Navigate back to the previous screen
-  };
   return (
     <SafeAreaProvider
       style={[styles.container, {paddingTop: inset.top, paddingBottom: 0}]}>
@@ -139,12 +134,10 @@ const UserAttemptedQuizzesScreen: React.FC = () => {
               contentContainerStyle={styles.categoryScroll}>
               <TouchableOpacity
                 onPress={() => handleCategoryChange('All')}
-                style={
-                  ([
-                    styles.categoryItem,
-                    selectedCategory === 'All' && styles.selectedCategory,
-                  ])
-                }>
+                style={[
+                  styles.categoryItem,
+                  selectedCategory === 'All' && styles.selectedCategory,
+                ]}>
                 <Text style={styles.categoryText}>All</Text>
               </TouchableOpacity>
               {userQuizData &&
@@ -164,7 +157,7 @@ const UserAttemptedQuizzesScreen: React.FC = () => {
           <FlatList
             data={filteredQuizzes()}
             renderItem={renderQuizItem}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.answer}
             contentContainerStyle={styles.quizList}
             showsVerticalScrollIndicator={false}
           />

@@ -37,7 +37,7 @@ const UpdateQuizScreen = ({
   const [modalVisible, setModalVisible] = useState<boolean>(true);
   const [question, setQuestion] = useState<string>(quiz.question);
   const [optionsMessage, setOptionsMessage] = useState<string[]>(
-    Object.values(quiz.options),
+    Object.values(quiz.options) as string[],
   );
   const [correctAnswer, setCorrectAnswer] = useState<any>(quiz.correct_answer);
   const dispatch = useDispatch();
@@ -124,7 +124,6 @@ const UpdateQuizScreen = ({
 
   const renderOptions = ({item, index}: {item: string; index: number}) => (
     <View style={styles.optionContainer}>
-      {console.log(item, index)}
       <TextInput
         style={styles.optionInput}
         placeholder={`Option ${index}`}
@@ -133,7 +132,7 @@ const UpdateQuizScreen = ({
       />
       {optionsMessage.length > 2 && (
         <TouchableOpacity onPress={() => deleteOption(index - 1)}>
-          <FontAwesome name={'trash'} size={24} color={'#F38686'} />
+          <FontAwesome name={'trash'} size={24} color={'#F38686' as Number} />
         </TouchableOpacity>
       )}
     </View>
@@ -181,7 +180,7 @@ const UpdateQuizScreen = ({
                         <AntDesign
                           name={'plus'}
                           resizeMode="contain"
-                          color={'#5591BD'}
+                          color={'#5591BD' as Number}
                         />
                         <Text style={styles.addButtonText}>
                           Add another option
@@ -197,10 +196,12 @@ const UpdateQuizScreen = ({
                           value: option,
                         }))}
                         setSelectedValue={setCorrectAnswer}
-                        selectedValue={{
-                          label: correctAnswer,
-                          value: correctAnswer,
-                        }} // Match the expected format
+                        selectedValue={
+                          {
+                            label: correctAnswer,
+                            value: correctAnswer,
+                          } as string
+                        } // Match the expected format
                       />
                     </View>
                     <TouchableOpacity

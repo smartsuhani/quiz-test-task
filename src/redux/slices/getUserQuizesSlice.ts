@@ -74,36 +74,49 @@ const fetchUserQuizSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(fetchUserQuizData.pending, state => {
+      .addCase(fetchUserQuizData.pending, (state: FetchUserQuizState) => {
         state.status = 'loading';
       })
       .addCase(
         fetchUserQuizData.fulfilled,
-        (state, action: PayloadAction<UserQuizData[]>) => {
+        (state: FetchUserQuizState, action: PayloadAction<UserQuizData[]>) => {
           state.status = 'succeeded';
           state.userQuizData = action.payload || []; // Store fetched data
         },
       )
-      .addCase(fetchUserQuizData.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message || 'Failed to fetch user quiz data';
-      })
-      .addCase(fetchAllCategoriesUserQuizData.pending, state => {
-        state.status = 'loading';
-      })
+      .addCase(
+        fetchUserQuizData.rejected,
+        (state: FetchUserQuizState, action: any) => {
+          state.status = 'failed';
+          state.error =
+            action.error.message || 'Failed to fetch user quiz data';
+        },
+      )
+      .addCase(
+        fetchAllCategoriesUserQuizData.pending,
+        (state: FetchUserQuizState) => {
+          state.status = 'loading';
+        },
+      )
       .addCase(
         fetchAllCategoriesUserQuizData.fulfilled,
-        (state, action: PayloadAction<Record<string, UserQuizData[]>>) => {
+        (
+          state: FetchUserQuizState,
+          action: PayloadAction<Record<string, UserQuizData[]>>,
+        ) => {
           state.userQuizData = action.payload; // Store fetched data
           state.status = 'succeeded';
         },
       )
-      .addCase(fetchAllCategoriesUserQuizData.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error =
-          action.error.message ||
-          'Failed to fetch all categories user quiz data';
-      });
+      .addCase(
+        fetchAllCategoriesUserQuizData.rejected,
+        (state: FetchUserQuizState, action: any) => {
+          state.status = 'failed';
+          state.error =
+            action.error.message ||
+            'Failed to fetch all categories user quiz data';
+        },
+      );
   },
 });
 

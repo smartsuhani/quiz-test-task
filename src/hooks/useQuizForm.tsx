@@ -3,8 +3,8 @@ import {useState} from 'react';
 
 const useQuizForm = () => {
   const [question, setQuestion] = useState<string>('');
-  const [selectedValue, setSelectedValue] = useState<string>('');
-  const [correctAnswer, setCorrectAnswer] = useState<string>('');
+  const [selectedValue, setSelectedValue] = useState<object>({});
+  const [correctAnswer, setCorrectAnswer] = useState<object>({});
   const [optionsMessage, setOptionsMessage] = useState<string[]>(['', '']); // Initial two options
 
   const addOption = () => {
@@ -20,7 +20,7 @@ const useQuizForm = () => {
       setOptionsMessage(newOptions);
 
       if (correctAnswer === newOptions[index]) {
-        setCorrectAnswer('');
+        setCorrectAnswer({});
       }
     }
   };
@@ -33,9 +33,9 @@ const useQuizForm = () => {
 
   const resetForm = () => {
     setQuestion('');
-    setSelectedValue('');
+    setSelectedValue({});
     setOptionsMessage(['', '']); // Reset to initial two options
-    setCorrectAnswer(''); // Reset correct answer state if needed
+    setCorrectAnswer({}); // Reset correct answer state if needed
   };
 
   return {

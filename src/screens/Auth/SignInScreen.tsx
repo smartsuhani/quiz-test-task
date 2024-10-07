@@ -57,7 +57,7 @@ const AuthScreen = () => {
       setLoginModalVisible(false);
       await firebaseLogin(email, password);
       setLoginModalVisible(false);
-      const user = auth().currentUser;
+      const user: any = auth().currentUser;
       dispatch(setLogin({email: email, uid: user.uid}));
     } catch (error) {
       setLoginModalVisible(true);
@@ -72,7 +72,7 @@ const AuthScreen = () => {
     try {
       setLoginModalVisible(false);
       await firebaseSignup(email, password);
-      const user = auth().currentUser;
+      const user: any = auth().currentUser;
       dispatch(setLogin({email: email, uid: user.uid}));
     } catch (error) {
       setLoginModalVisible(true);

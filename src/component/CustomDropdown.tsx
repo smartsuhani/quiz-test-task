@@ -51,7 +51,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = props => {
         value={value}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
-        onChange={item => {
+        onChange={(item: DropdownItem) => {
           setValue(item.value);
           setSelectedValue(item);
           setIsFocus(false);

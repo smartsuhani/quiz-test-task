@@ -158,7 +158,7 @@ const HomeScreen = () => {
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
-            navigation.navigate('ProfileScreen');
+            navigation.navigate('ProfileScreen' as never);
           }}>
           <FastImage
             source={{
@@ -200,15 +200,16 @@ const HomeScreen = () => {
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={() => (
           <View style={{marginBottom: 40, marginLeft: 16}}>
-            <Text style={{fontSize: 20, fontWeight: '700', color: '#000'}}>
-              Let's Play
-            </Text>
+            <Text style={styles.listHeader}>Let's Play</Text>
           </View>
         )}
         renderItem={({item}) => (
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('QuizScreen', {category: item.name});
+              navigation.navigate(
+                'QuizScreen' as never,
+                {category: item.name} as any,
+              );
             }}
             style={styles.card}>
             <View style={styles.imageContainer}>
@@ -268,7 +269,7 @@ const HomeScreen = () => {
               ListHeaderComponent={() => (
                 <View style={styles.leaderboardHeader}>
                   <Text style={styles.leaderboardRank}>No.</Text>
-                  <Text style={[styles.leaderboardName, {fontWeight: 'bold'}]}>
+                  <Text style={[styles.leaderboardName, {fontWeight: '700'}]}>
                     Name
                   </Text>
                   <Text style={styles.leaderboardPoints}>Attempt</Text>
@@ -289,7 +290,7 @@ const HomeScreen = () => {
         <View style={styles.postView}>
           <MaterialIcons
             name="add"
-            color={'white'}
+            color={'white' as Number}
             size={24}
             style={{marginRight: 8}}
           />
@@ -588,6 +589,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     // backgroundColor: '#5591BD'
+  },
+  listHeader: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#000',
   },
 });
 

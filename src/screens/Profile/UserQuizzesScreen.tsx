@@ -12,7 +12,6 @@ import {
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Feather from 'react-native-vector-icons/Feather';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store';
 import {
@@ -25,8 +24,18 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import {array} from 'yup';
-import CustomHeader from "../../component/CustomHeader";
+import CustomHeader from '../../component/CustomHeader';
+interface QuizOption {
+  [key: string]: string;
+}
 
+interface QuizItem {
+  category: string;
+  question: string;
+  options: QuizOption;
+  correct_answer: string;
+  id: string;
+}
 const UserQuizzesScreen = (): React.ReactElement => {
   const dispatch = useDispatch();
   const inset = useSafeAreaInsets();
@@ -76,7 +85,7 @@ const UserQuizzesScreen = (): React.ReactElement => {
     );
   };
 
-  const renderQuizItem = ({item}: {item: any}) => (
+  const renderQuizItem = ({item}: {item: QuizItem}) => (
     <View style={[styles.quizItem]}>
       <View style={styles.quizCategory}>
         <Text style={styles.quizCategoryText}>{item.category}</Text>
@@ -125,12 +134,8 @@ const UserQuizzesScreen = (): React.ReactElement => {
     console.log(userQuizzes);
     setCategories(['All', ...Object.keys(userQuizzes)]);
   }, [selectedCategory, quizzes]);
-
-  const handleBackPress = () => {
-    navigation.goBack(); // Navigate back to the previous screen
-  };
   const handleEditQuiz = (quiz: any) => {
-    navigation.navigate('UpdateQuizScreen', {quiz});
+    navigation.navigate('UpdateQuizScreen' as never, {quiz} as any);
   };
 
   return (
@@ -185,6 +190,7 @@ const UserQuizzesScreen = (): React.ReactElement => {
         </View>
       ) : (
         <FlatList
+          showsVerticalScrollIndicator={false}
           data={filteredQuizzes}
           renderItem={renderQuizItem}
           keyExtractor={item => item.id}

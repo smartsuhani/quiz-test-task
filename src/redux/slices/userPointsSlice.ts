@@ -48,18 +48,27 @@ const userPointsSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(initializeUserPointsListener.pending, state => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(initializeUserPointsListener.fulfilled, state => {
-        state.loading = false;
-      })
-      .addCase(initializeUserPointsListener.rejected, (state, action) => {
-        state.loading = false;
-        state.error =
-          action.payload || 'Failed to initialize user points listener';
-      });
+      .addCase(
+        initializeUserPointsListener.pending,
+        (state: UserPointsState) => {
+          state.loading = true;
+          state.error = null;
+        },
+      )
+      .addCase(
+        initializeUserPointsListener.fulfilled,
+        (state: UserPointsState) => {
+          state.loading = false;
+        },
+      )
+      .addCase(
+        initializeUserPointsListener.rejected,
+        (state: UserPointsState, action) => {
+          state.loading = false;
+          state.error =
+            action.payload || 'Failed to initialize user points listener';
+        },
+      );
   },
 });
 
