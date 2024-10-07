@@ -1,5 +1,5 @@
 // src/AuthListener.tsx
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 import {useDispatch} from 'react-redux';
 import auth from '@react-native-firebase/auth';
 import {setLogin} from './redux/slices/userSlice';
@@ -10,7 +10,6 @@ const AuthListener = () => {
   useEffect(() => {
     const unsubscribe = auth().onAuthStateChanged(user => {
       if (user) {
-        console.log('USER', user);
         dispatch(setLogin({email: user.email || '', uid: user.uid || ''}));
       }
     });

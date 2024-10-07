@@ -20,6 +20,8 @@ const initialState: QuizzesState = {
 export const fetchQuizzesCategory = createAsyncThunk<QuizCategory[]>(
   'quizzesCategory/fetchQuizzesCategory',
   async () => {
+    const ref1 = firebase.database().ref('/quizzesCategories');
+    await ref1.keepSynced(true);
     const snapshot = await firebase
       .database()
       .ref('/quizzesCategories')
@@ -47,10 +49,13 @@ const quizzesCategorySlice = createSlice<QuizzesState>({
           state.quizzesCategory = action.payload;
         },
       )
-      .addCase(fetchQuizzesCategory.rejected, (state: QuizzesState, action) => {
-        state.status = 'failed';
-        state.error = action.error.message || 'Failed to fetch quizzes';
-      });
+      .addCase(
+        fetchQuizzesCategory.rejected,
+        (state: QuizzesState, action: any) => {
+          state.status = 'failed';
+          state.error = action.error.message || 'Failed to fetch quizzes';
+        },
+      );
   },
 });
 

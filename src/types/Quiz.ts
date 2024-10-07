@@ -22,4 +22,3 @@ export interface QuizQuestion {
   };
   correct_answer: string;
 }
-

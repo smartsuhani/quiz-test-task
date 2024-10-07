@@ -29,23 +29,31 @@ const initialState: UserQuizState = {
 export const updateUserQuizData = createAsyncThunk<void, UserQuizData>(
   'userQuiz/updateUserQuizData',
   async (data: UserQuizData) => {
-    const { userId, category } = data;
+    const {userId, category} = data;
 
     // Define the path in Firebase
-    console.log('MYQUIZ', data);
     const userRef = firebase.database().ref('userQuizzes/');
-    console.log('MYQUIZ', userRef);
-
-    // Push new quiz data under userId and category
+    const userPointsRef = firebase
+      .database()
+      .ref(`userPoints/${userId}/points`);
+    // Fetch current user points
     try {
+      const pointsSnapshot = await userPointsRef.once('value');
+      const currentPoints = pointsSnapshot.val();
+      // Check if points are available and it's the first update
+      if (currentPoints) {
+        // Increment points by 1
+        await userPointsRef.set(currentPoints + 1);
+      } else {
+        await userPointsRef.set(1);
+      }
+      // Push new quiz data under userId and category
       await userRef.child(userId).child(category).push(data);
-      console.log('Data saved successfully!');
     } catch (error) {
       console.error('Error saving data to Firebase:', error);
     }
   },
 );
-
 
 // Create the slice
 const userQuizDataSlice = createSlice<UserQuizState>({
@@ -53,7 +61,7 @@ const userQuizDataSlice = createSlice<UserQuizState>({
   initialState,
   reducers: {
     // Optional: You can add other reducers for additional actions if necessary
-    clearUserQuizData: state => {
+    clearUserQuizData: (state: UserQuizState) => {
       state.userQuizData = {};
       state.status = 'idle';
       state.error = null;
@@ -67,7 +75,7 @@ const userQuizDataSlice = createSlice<UserQuizState>({
       .addCase(updateUserQuizData.fulfilled, state => {
         state.status = 'succeeded';
       })
-      .addCase(updateUserQuizData.rejected, (state, action) => {
+      .addCase(updateUserQuizData.rejected, (state, action: any) => {
         state.status = 'failed';
         state.error = action.error.message || 'Failed to update user quiz data';
       });
