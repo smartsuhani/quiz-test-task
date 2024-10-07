@@ -1,79 +1,120 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# React Native Project with TypeScript and Firebase Realtime Database
 
-# Getting Started
+## Table of Contents
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+1. [Prerequisites](#prerequisites)
+2. [Project Setup](#project-setup)
+3. [Firebase Configuration](#firebase-configuration)
+4. [iOS Setup](#ios-setup)
+5. [Android Setup](#android-setup)
+7. [Import Demo Dataset](#import-demo-dataset)
+8. [Running the Project](#running-the-project)
 
-## Step 1: Start the Metro Server
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+## Prerequisites
 
-To start Metro, run the following command from the _root_ of your React Native project:
+Before you begin, ensure you have met the following requirements:
 
-```bash
-# using npm
-npm start
+- Node.js and npm installed: [Download and install Node.js](https://nodejs.org/)
+- React Native CLI installed globally: `npm install -g react-native-cli`
+- Xcode (for iOS development) installed from the App Store
+- Android Studio (for Android development) installed
 
-# OR using Yarn
-yarn start
-```
+## Project Setup
 
-## Step 2: Start your Application
+1. **Clone the repository:**
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+   ```sh
+   git clone https://github.com/smartsuhani/quiz-test-task.git
+   cd quiz-test-task
+2. **Install dependencies:**
 
-### For Android
+   ```sh
+   yarn install
+   
+## Firebase Configuration
 
-```bash
-# using npm
-npm run android
+1. **Create a Firebase project:**
 
-# OR using Yarn
-yarn android
-```
+   ```sh
+   Go to Firebase Console and create a new project.
+   
+2. **Add an iOS app to your Firebase project:**
 
-### For iOS
+   ```sh
+   Follow the setup instructions and download the GoogleService-Info.plist file.
+   Open the downloaded GoogleService-Info.plist file and copy its contents.
+   Replace the contents of ios/quizDemo/GoogleService-Info.plist with the copied contents.
+   
+3. **Add an Android app to your Firebase project:**
 
-```bash
-# using npm
-npm run ios
+   ```sh
+   Follow the setup instructions and download the google-services.json file.
+   Open the downloaded google-services.json file and copy its contents.
+   Replace the contents of android/app/google-services.json with the copied contents.
 
-# OR using Yarn
-yarn ios
-```
+## iOS Setup
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+1. **Install CocoaPods:**
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+   ```sh
+   sudo gem install cocoapods
 
-## Step 3: Modifying your App
+2. **Navigate to the ios directory and install pods:**
 
-Now that you have successfully run the app, let's modify it.
+   ```sh
+   cd ios
+   pod install
+   cd ..
+   
+3. **Update App Identifier:**
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
+   ```sh
+   open ios/quizDemo.xcworkspace in Xcode.
+   Go to the project settings and update the Bundle Identifier to match the identifier you used when setting up the Firebase project.
+   Ensure the Team is set under the Signing & Capabilities tab.
 
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
+## Android Setup
 
-## Congratulations! :tada:
+1. **Update App Identifier:**
 
-You've successfully run and modified your React Native App. :partying_face:
+   ```sh
+   Open android/app/build.gradle and update the applicationId to match the identifier you used when setting up the Firebase project.
 
-### Now what?
+## Import Demo Dataset
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
+1. **Download the demo dataset:**   
+   
+   ```sh
+   The demo dataset is provided in the quizzes.json and quizzesCategories.json file located in the root of this repository.
+2. **Import the dataset:**
 
-# Troubleshooting
+   ```sh
+   Go to the Firebase Console.
+   Navigate to your project and select the Realtime Database from the left-hand menu.
+   Click on the three vertical dots in the upper-right corner of the database and select Import JSON.
+   Choose the quizzes.json and quizzesCategories.json files and import it into the root level of your database.
 
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+## Running the Project
 
-# Learn More
+1. **Run on iOS:**
 
-To learn more about React Native, take a look at the following resources:
+   ```sh
+   npx react-native run-ios
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+2. **Run on Android:**
+
+   ```sh
+   npx react-native run-android
+
+
+### Explanation
+
+- **Import Demo Dataset**: This new section provides instructions on downloading and importing the demo dataset into the Firebase Realtime Database.
+- **Firebase Configuration**: Guides the user through creating a Firebase project and configuring it for iOS and Android.
+- **iOS and Android Setup**: Detailed steps to configure each platform.
+- **Running the Project**: Commands to run the project on both platforms.
+- **Conclusion**: Encourages contributions and issues reporting.
+
+This updated `README.md` provides comprehensive instructions for new developers to set up, configure, and run your project, including importing a demo dataset to get started quickly.
+
